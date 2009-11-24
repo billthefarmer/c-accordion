@@ -1060,7 +1060,23 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    {
 			// Play note
 
-			int k = (i == 2)? j + 1: j;
+			int k;
+
+			switch (i)
+			{
+			case 0:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    break;
+
+			case 1:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    break;
+
+			case 2:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    break;
+			}
+
 			int note = notes[k][bellows] + keyvals[key][i];
 			ShortMessage(NOTEON + i, note, volume);
 		    }
@@ -1147,7 +1163,23 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    {
 			// Play note
 
-			int k = (i == 2)? j + 1: j;
+			int k;
+
+			switch (i)
+			{
+			case 0:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    break;
+
+			case 1:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    break;
+
+			case 2:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    break;
+			}
+
 			int note = notes[k][bellows] + keyvals[key][i];
 			ShortMessage(NOTEON + i, note, volume);
 		    }
