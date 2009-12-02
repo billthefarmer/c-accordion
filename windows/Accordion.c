@@ -110,6 +110,8 @@ char *instruments[] =
      "Seashore", "Bird Tweet", "Telephone Ring",
      "Helicopter", "Applause", "Gunshot"};
 
+int instrument;
+
 // List of keys and offset values
 
 char *keys[] =
@@ -126,15 +128,7 @@ int keyvals[LENGTH(keys)][ROWS] =
 //     { 3, -2,  5,  0, -5,  2, -3};
 
 UINT key;
-
 HWND hkey;
-
-// Layouts
-
-char *layouts[] =
-    {"Low notes", "Accidentals"};
-
-UINT layout;
 
 // Keyboard
 
@@ -196,8 +190,7 @@ LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 
 UINT ChangeInstrument(HWND);
 UINT ReverseButtons(HWND);
-UINT ChangeLayout(HWND, HWND);
-UINT ChangeKey(HWND, HWND);
+UINT ChangeKey(HWND);
 UINT ChangeVolume(WPARAM, LPARAM);
 UINT CharPressed(WPARAM, LPARAM);
 UINT KeyDown(WPARAM, LPARAM);
@@ -310,17 +303,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
     static HWND hgrp;
     static HWND inst;
-    static HWND hlay;
     static HWND hvol;
     static HWND quit;
     static HWND text;
     static HWND stat;
-
-    // Selection values
-
-    static int ival;
-    static int kval;
-    static int lval;
 
     // Window dimensions
 
@@ -519,47 +505,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	SendMessage(hvol, TBM_SETRANGE, TRUE, MAKELONG(0, MAXVOL));
 	SendMessage(hvol, TBM_SETPOS, TRUE, volume);
 
-	// Create text
-
-	text =
-	    CreateWindow(WC_STATIC,   // Predefined class.
-			 "Layout:",   // Text.
-			 WS_VISIBLE | WS_CHILD |
-			 SS_LEFT,     // Styles.
-			 279,         // x position.
-			 58,          // y position.
-			 54,          // width.
-			 20,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)TXTS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
-
-	// Create layout pulldown
-
-	hlay =
-	    CreateWindow(WC_COMBOBOX, // Predefined class.
-			 NULL,        // No text.
-			 WS_VISIBLE | WS_CHILD |
-			 CBS_DROPDOWNLIST, // Styles.
-			 336,         // x position.
-			 54,          // y position.
-			 110,         // width.
-			 24,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)LAYT, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
-
-	// Add the layouts
-
-	for (i = 0; i != LENGTH(layouts); i++)
-	    SendMessage(hlay, CB_ADDSTRING, 0, (LPARAM)layouts[i]);
-
-	// Select accidentals
-
-	SendMessage(hlay, CB_SELECTSTRING, -1, (LPARAM)"Accidentals");
-
 	// Create quit button
 
 	quit =
@@ -693,11 +638,11 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Change the key
 
-	ChangeKey(hkey, hlay);
+	ChangeKey(hkey); // , hlay);
 
 	// Change layout
 
-	ChangeLayout(hlay, hkey);
+	// ChangeLayout(hlay, hkey);
 	break;
 
 	// Colour static text, defeat DefWindowProc() by capturing
@@ -794,26 +739,21 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	case INST:
 	    switch (HIWORD(wParam))
 	    {
-	    case CBN_DROPDOWN:
-		ival = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-		break;
-
 	    case CBN_SELENDOK:
 		ChangeInstrument((HWND)lParam);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
 		break;
 
 	    case CBN_SELENDCANCEL:
-		SendMessage((HWND)lParam, CB_SETCURSEL, ival, 0);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
+		SendMessage((HWND)lParam, CB_SETCURSEL, instrument, 0);
 		break;
+
+	    default:
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	    }
+
+	    // Set the focus back to the window
+
+	    SetFocus(hWnd);
 	    break;
 
 	    // Reverse control
@@ -832,53 +772,21 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	case KEYS:
 	    switch (HIWORD(wParam))
 	    {
-	    case CBN_DROPDOWN:
-		kval = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-		break;
-
 	    case CBN_SELENDOK:
-		ChangeKey((HWND)lParam, hlay);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
+		ChangeKey((HWND)lParam); // , hlay);
 		break;
 
 	    case CBN_SELENDCANCEL:
-		SendMessage((HWND)lParam, CB_SETCURSEL, kval, 0);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
+		SendMessage((HWND)lParam, CB_SETCURSEL, key, 0);
 		break;
+
+	    default:
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	    }
-	    break;
 
-	    // Layout control
+	    // Set the focus back to the window
 
-	case LAYT:
-	    switch (HIWORD(wParam))
-	    {
-	    case CBN_DROPDOWN:
-		lval = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-		break;
-
-	    case CBN_SELENDOK:
-		ChangeLayout((HWND)lParam, hkey);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
-		break;
-
-	    case CBN_SELENDCANCEL:
-		SendMessage((HWND)lParam, CB_SETCURSEL, lval, 0);
-
-		// Set the focus back to the window
-
-		SetFocus(hWnd);
-		break;
-	    }
+	    SetFocus(hWnd);
 	    break;
 
 	    // Keyboard buttons, set the focus back to the window
@@ -933,10 +841,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 UINT ChangeInstrument(HWND hinst)
 {
     int i;
-    int inst = SendMessage(hinst, CB_GETCURSEL, 0, 0);
+    instrument = SendMessage(hinst, CB_GETCURSEL, 0, 0);
 
     for (i = 0; i < LENGTH(buttons); i++)
-	ShortMessage(CHANGE + i, inst, 0);
+	ShortMessage(CHANGE + i, instrument, 0);
 }
 
 // Reverse buttons
@@ -952,15 +860,9 @@ UINT ReverseButtons(HWND hrev)
 
 // Change key
 
-UINT ChangeKey(HWND hkey, HWND hlay)
+UINT ChangeKey(HWND hkey) // , HWND hlay)
 {
     key = SendMessage(hkey, CB_GETCURSEL, 0, 0);
-
-    if (key > 2)
-	SendMessage(hlay, CB_SELECTSTRING, -1, (LPARAM)"Low Notes");
-
-    else
-	SendMessage(hlay, CB_SELECTSTRING, -1, (LPARAM)"Accidentals");
 }
 
 UINT ChangeVolume(WPARAM wParam, LPARAM lParam)
@@ -1004,19 +906,6 @@ UINT ChangeVolume(WPARAM wParam, LPARAM lParam)
 	// Set the new position
 
 	SendMessage((HWND)lParam, TBM_SETPOS, TRUE, volume);
-}
-
-// Change layout
-
-UINT ChangeLayout(HWND hlay, HWND hkey)
-{
-    layout = SendMessage(hlay, CB_GETCURSEL, 0, 0);
-
-    if (layout > 0)
-	SendMessage(hkey, CB_SELECTSTRING, -1, (LPARAM)"A/D/G");
-
-    else
-	SendMessage(hkey, CB_SELECTSTRING, -1, (LPARAM)"C#/D/G");
 }
 
 // Char pressed
