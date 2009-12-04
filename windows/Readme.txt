@@ -1,14 +1,14 @@
                               Accordion
                               =========
 
-Three row accordion emulator with. Uses the standard PC keyboard keys
-as accordion buttons, and the space bar or the escape key as the
+Three row accordion emulator. Uses the standard keyboard keys as
+accordion buttons, and the space bar or the escape key as the
 bellows. Unfortunately, depending on your luck, the keyboard on your
 PC may not detect more than two or three buttons pressed at once. I
 found an old keyboard worked much better. You can see what is going on
 in the bottom half of the accordion window, which shows what keys the
-program thinks are pressed. If you do not know how to play accordion,
-see http://info.melodeon.net
+program thinks are pressed. The bellows button is shown at the bottom
+left.
 
 Controls
 ========
