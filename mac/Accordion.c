@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Melodeon - A Melodeon emulator written in C.
+//  Accordion - An Accordion emulator written in C.
 //
 //  Copyright (C) 2009  Bill Farmer
 //
@@ -49,8 +49,7 @@ enum {
     kCommandInst    = 'inst',
     kCommandReverse = 'rvrs',
     kCommandKey     = 'key ',
-    kCommandVolume  = 'vol ',
-    kCommandLayout  = 'lay '};
+    kCommandVolume  = 'vol '};
 
 // HIView IDs
 
@@ -59,9 +58,6 @@ HIViewID kHIViewIDReverse =
 
 HIViewID kHIViewIDKey =
     {kCommandKey, 102};
-
-HIViewID kHIViewIDLayout =
-    {kCommandLayout, 103};
 
 // Key IDs
 
@@ -192,13 +188,6 @@ int keyvals[LENGTH(keys)][ROWS] =
 //     { 3, -2,  5,  0, -5,  2, -3};
 
 int key;
-
-// Layouts
-
-char *layouts[] =
-    {"Low notes", "Accidentals"};
-
-int layout;
 
 // Keyboard
 
@@ -530,56 +519,6 @@ int main(int argc, char *argv[])
     HIViewAddSubview(group, slider);
     HIViewPlaceInSuperviewAt(slider, 100, 58);
 
-    // Bounds of text
-
-    bounds.bottom = 16;
-    bounds.right  = 48;
-
-    // Create static text
-
-    CreateStaticTextControl(window, &bounds, CFSTR("Layout:"), NULL, &text);
-
-    // Place in the group box
-
-    HIViewAddSubview(group, text);
-    HIViewPlaceInSuperviewAt(text, 286, 56);
-
-    // Bounds of combo box
-
-    rect.size.width = 98;
-
-    // Create combo box
-
-    HIComboBoxCreate(&rect, CFSTR("Accidentals"), NULL, NULL,
-                     kHIComboBoxStandardAttributes,
-                     &combo);
-
-    // Set visible and set command ID
-
-    HIViewSetVisible(combo, true);
-    HIViewSetID(combo, kHIViewIDLayout);
-    HIViewSetCommandID(combo, kCommandLayout); 
-
-    // Add layouts
-
-    for (i = 0; i < LENGTH(layouts); i++)
-    {
-        HIComboBoxAppendTextItem(combo,
-            CFStringCreateWithCString(kCFAllocatorDefault,
-                                      layouts[i],
-                                      kCFStringEncodingMacRoman), NULL);
-
-        // Set current layout
-
-        if (strcmp(layouts[i], "Accidentals") == 0)
-            layout = i;
-    }
-
-    // Place in the group box
-
-    HIViewAddSubview(group, combo);
-    HIViewPlaceInSuperviewAt(combo, 346, 54);
-
     // Bounds of push button
 
     bounds.bottom = 20;
@@ -740,8 +679,8 @@ int main(int argc, char *argv[])
     // Create static text
 
     CreateStaticTextControl(window, &bounds,
-        CFSTR("Press the function keys F1-F12 as melodeon buttons "
-              "and the space bar as the bellows. 4th button start."),
+        CFSTR("Press the keyboard keys as accordion buttons "
+              "and the space bar as the bellows. 3rd button start."),
                             &style, &text);
 
     // Place in group box
@@ -1116,11 +1055,10 @@ OSStatus CommandHandler(EventHandlerCallRef next,
 
     switch (command.commandID)
     {
-        // Key, instrument, or layout control
+        // Key or instrument control
 
     case kCommandKey:
     case kCommandInst:
-    case kCommandLayout:
 
 	// If the combo box list isn't visible (the user just closed
 	// it)
@@ -1210,31 +1148,6 @@ OSStatus ComboBoxHandler(EventHandlerCallRef next,
 
     case kCommandKey:
         key = index;
-	HIViewFindByID(HIViewGetRoot(window),
-		       kHIViewIDLayout,
-		       &combo);
-	if (key > 2)
-	    HIViewSetText(combo, CFSTR("Low Notes"));
-
-	else
-	    HIViewSetText(combo, CFSTR("Accidentals"));
-
-        break;
-
-        // Layout
-
-    case kCommandLayout:
-        layout = index;
-	HIViewFindByID(HIViewGetRoot(window),
-		       kHIViewIDKey,
-		       &combo);
-
-	if (layout > 0)
-	    HIViewSetText(combo, CFSTR("A/D/G"));
-
-	else
-	    HIViewSetText(combo, CFSTR("C#/D/G"));
-
         break;
 
         // Something else
@@ -1311,14 +1224,31 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                         {
                             // Stop the current note
 
-                            int note = notes[j][!bellows] + keyvals[key][i];
+                            int k;
+
+                            switch (i)
+                            {
+                            case 0:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+                                break;
+
+                            case 1:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+                                break;
+
+                            case 2:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+                                break;
+                            }
+
+                            int note = notes[k][!bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOff + i,
                                                  note, 0, 0);
 
                             // Play the new note
 
-                            note = notes[j][bellows] + keyvals[key][i];
+                            note = notes[k][bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOn + i,
                                                  note, volume, 0);
@@ -1407,14 +1337,31 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                         {
                             // Stop the current note
 
-                            int note = notes[j][!bellows] + keyvals[key][i];
+                            int k;
+
+                            switch (i)
+                            {
+                            case 0:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+                                break;
+
+                            case 1:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+                                break;
+
+                            case 2:
+                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+                                break;
+                            }
+
+                            int note = notes[k][!bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOff + i,
                                                  note, 0, 0);
 
                             // Play the new note
 
-                            note = notes[j][bellows] + keyvals[key][i];
+                            note = notes[k][bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOn + i,
                                                  note, volume, 0);
