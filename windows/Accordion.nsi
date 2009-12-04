@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Accordion"
-!define PRODUCT_VERSION "1.05"
+!define PRODUCT_VERSION "1.0"
 !define PRODUCT_PUBLISHER "Bill Farmer"
 !define PRODUCT_WEB_SITE "http://accordion.googlecode.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Accordion.exe"
@@ -64,6 +64,7 @@ Section "MainSection" SEC01
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Accordion.lnk" "$INSTDIR\Accordion.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -72,7 +73,8 @@ SectionEnd
 Section -AdditionalIcons
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  SetShellVarContext all
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Accordion on Google Code.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -108,8 +110,9 @@ Section Uninstall
   Delete "$INSTDIR\COPYING"
   Delete "$INSTDIR\Accordion.exe"
 
+  SetShellVarContext all
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Accordion on Google Code.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Accordion.lnk"
 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"

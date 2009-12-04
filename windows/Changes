@@ -1,3 +1,5 @@
+Fix uninstaller not removing shortcuts problem in Vista and Windows 7. 03-Dec-09
+
 Update Readme file. 03-Dec-09
 
 Remove layout code and fix problem with combo boxes in Vista and Windows 7. 02-Dec-09
