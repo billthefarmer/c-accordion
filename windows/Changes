@@ -1,3 +1,5 @@
+Remove commented out code and unnecessary globals. 04-Dec-09
+
 Fix uninstaller not removing shortcuts problem in Vista and Windows 7. 03-Dec-09
 
 Update Readme file. 03-Dec-09

@@ -128,7 +128,6 @@ int keyvals[LENGTH(keys)][ROWS] =
 //     { 3, -2,  5,  0, -5,  2, -3};
 
 UINT key;
-HWND hkey;
 
 // Keyboard
 
@@ -168,8 +167,6 @@ BOOL bellows;
 // Reverse value
 
 BOOL reverse;
-
-HWND hrev;
 
 // Volume value
 
@@ -303,6 +300,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
     static HWND hgrp;
     static HWND inst;
+    static HWND hrev;
+    static HWND hkey;
     static HWND hvol;
     static HWND quit;
     static HWND text;
@@ -638,11 +637,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Change the key
 
-	ChangeKey(hkey); // , hlay);
-
-	// Change layout
-
-	// ChangeLayout(hlay, hkey);
+	ChangeKey(hkey);
 	break;
 
 	// Colour static text, defeat DefWindowProc() by capturing
@@ -773,7 +768,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	    switch (HIWORD(wParam))
 	    {
 	    case CBN_SELENDOK:
-		ChangeKey((HWND)lParam); // , hlay);
+		ChangeKey((HWND)lParam);
 		break;
 
 	    case CBN_SELENDCANCEL:
@@ -860,7 +855,7 @@ UINT ReverseButtons(HWND hrev)
 
 // Change key
 
-UINT ChangeKey(HWND hkey) // , HWND hlay)
+UINT ChangeKey(HWND hkey)
 {
     key = SendMessage(hkey, CB_GETCURSEL, 0, 0);
 }
@@ -927,6 +922,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 	// Check spacebar
 
     case VK_MENU:
+    case VK_SHIFT:
     case VK_SPACE:
     case VK_ESCAPE:
     case VK_CONTROL:
@@ -1030,6 +1026,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
     // Check spacebar
 
     case VK_MENU:
+    case VK_SHIFT:
     case VK_SPACE:
     case VK_ESCAPE:
     case VK_CONTROL:
