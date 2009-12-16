@@ -10,8 +10,8 @@
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 
-; MUI 1.67 compatible ------
-!include "MUI.nsh"
+; MUI 2.0 compatible ------
+!include "MUI2.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING

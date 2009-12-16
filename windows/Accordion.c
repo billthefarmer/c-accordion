@@ -53,8 +53,9 @@
 
 // Buttons
 
-#define ROWS     3
-#define BUTTONS 11
+#define ROWS         3
+#define BUTTONS     11
+#define BASSBUTTONS 12
 
 // Button size
 
@@ -118,11 +119,11 @@ char *keys[] =
     {"F/Bb/Eb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#"};
 
 int keyvals[LENGTH(keys)][ROWS] =
-    {{ 3, -2, -7},
-     { 5,  0, -5},
-     { 7,  2, -3},
-     { 7,  2,  1},
-     { 1,  0, -1}};
+    {{ 3, -2, -7},  // F/Bb/Eb
+     { 5,  0, -5},  // G/C/F
+     { 7,  2, -3},  // A/D/G
+     { 7,  2,  1},  // C#/D/G
+     { 1,  0, -1}}; // B/C/C#
 
 //      Eb  Bb   F   C   G   D   A
 //     { 3, -2,  5,  0, -5,  2, -3};
@@ -141,6 +142,11 @@ char *keytops[3] =
      "ASDFGHJKL--",
      "ZXCVBNM---"};
 
+int basskeys[] =
+  {VK_F1, VK_F2,  VK_F3,  VK_F4,
+   VK_F5, VK_F6,  VK_F7,  VK_F8,
+   VK_F9, VK_F10, VK_F11, VK_F12};
+
 // Midi notes for 'C'
 
 BYTE notes[BUTTONS][2] =
@@ -156,9 +162,60 @@ BYTE notes[BUTTONS][2] =
      {88, 83},
      {91, 86}};
 
+// Chords
+
+BYTE chords[LENGTH(keys)][BASSBUTTONS][2][2] =
+    {
+	// F/Bb/Eb
+
+	{{{41, 53}, {36, 48}}, {{65, 60}, {60, 67}},  //  F/C
+	 {{38, 50}, {43, 55}}, {{62, 69}, {67, 62}},  //  D/G
+	 {{46, 58}, {41, 53}}, {{70, 65}, {65, 60}},  // Bb/F
+	 {{43, 55}, {36, 48}}, {{67, 62}, {60, 67}},  //  G/C
+	 {{39, 51}, {46, 58}}, {{63, 70}, {70, 65}},  // Eb/Bb
+	 {{44, 56}, {44, 56}}, {{68, 63}, {68, 63}}}, // Ab/Ab
+
+	// G/C/F
+
+	{{{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{40, 52}, {45, 57}}, {{64, 71}, {69, 64}},  //  E/A
+	 {{36, 48}, {43, 55}}, {{60, 67}, {67, 62}},  //  C/G
+	 {{45, 57}, {38, 50}}, {{69, 64}, {62, 69}},  //  A/D
+	 {{41, 53}, {36, 48}}, {{65, 60}, {60, 67}},  //  F/C
+	 {{46, 58}, {46, 58}}, {{70, 65}, {70, 65}}}, // Bb/Bb
+
+	// A/D/G
+
+	{{{45, 57}, {40, 52}}, {{69, 64}, {64, 71}},  //  A/E
+	 {{42, 54}, {47, 59}}, {{66, 61}, {71, 66}},  // F#/B
+	 {{38, 50}, {45, 57}}, {{62, 69}, {69, 64}},  //  D/A
+	 {{47, 59}, {40, 52}}, {{71, 66}, {64, 71}},  //  B/E
+	 {{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{36, 48}, {36, 48}}, {{60, 67}, {60, 67}}}, //  C/C
+
+	// C#/D/G
+
+	{{{45, 57}, {40, 52}}, {{69, 64}, {64, 71}},  //  A/E
+	 {{42, 54}, {47, 59}}, {{66, 61}, {71, 66}},  // F#/B
+	 {{38, 50}, {45, 57}}, {{62, 69}, {69, 64}},  //  D/A
+	 {{47, 59}, {40, 52}}, {{71, 66}, {64, 71}},  //  B/E
+	 {{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{36, 48}, {36, 48}}, {{60, 67}, {60, 67}}}, //  C/C
+
+	// B/C/C#
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+    };
+
 // Buttons
 
 BOOL buttons[ROWS][BUTTONS];
+BOOL bass[BASSBUTTONS];
 
 // Bellows handle
 
@@ -174,6 +231,7 @@ UINT volume = MAXVOL;
 
 // Display handles
 
+HWND bassdisplay[BASSBUTTONS];
 HWND display[ROWS][BUTTONS];
 
 // Spacebar
@@ -228,7 +286,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	    LoadCursor(NULL,
 		       IDC_ARROW);        // predefined arrow
 	wc.hbrBackground =
-	    GetSysColorBrush(COLOR_3DFACE);
+	    GetSysColorBrush(COLOR_WINDOW);
 // 	    GetStockObject(WHITE_BRUSH);  // white background brush
 	wc.lpszMenuName =  "MainMenu";    // name of menu resource
 	wc.lpszClassName = "MainWClass";  // name of window class
@@ -405,7 +463,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	int i;
 
-	for (i = 0; i != LENGTH(instruments); i++)
+	for (i = 0; i < LENGTH(instruments); i++)
 	    SendMessage(inst, CB_ADDSTRING, 0, (LPARAM)instruments[i]);
 
 	// Select the Accordion
@@ -462,7 +520,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Add the keys
 
-	for (i = 0; i != LENGTH(keys); i++)
+	for (i = 0; i < LENGTH(keys); i++)
 	    SendMessage(hkey, CB_ADDSTRING, 0, (LPARAM)keys[i]);
 
 	// Select C
@@ -530,7 +588,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 10,          // x position.
 			 90,          // y position.
 			 540,         // width.
-			 117,         // height.
+			 77,          // height.
 			 hWnd,        // Parent window.
 			 NULL,        // No id.
 			 hinst,       // handle to application instance
@@ -545,7 +603,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 SS_CENTER,   // Styles.
 			 20,          // x position.
-			 127,         // y position.
+			 107,         // y position.
 			 520,         // width.
 			 52,          // height.
 			 hWnd,        // Parent window.
@@ -573,22 +631,44 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 BS_GROUPBOX, // Styles.
 			 10,          // x position.
-			 bottom - 160, // y position.
+			 bottom - 204, // y position.
 			 540,         // width.
-			 150,         // height.
+			 194,         // height.
 			 hWnd,        // Parent window.
 			 NULL,        // No id.
 			 hinst,       // handle to application instance
 			 NULL);       // Pointer not needed.
 
-	// Create three rows of display buttons
+	// Create a row of bass buttons
+
+	for (i = 0; i < LENGTH(bassdisplay); i++)
+	{
+	  int x = 21 + 44 * i;
+	  int y = bottom - 186;
+
+	  bassdisplay[i] =
+	    CreateWindow(WC_BUTTON,  // Predefined class.
+			 NULL,       // No text.
+			 WS_VISIBLE | WS_CHILD |
+			 BS_PUSHBUTTON, // Styles.
+			 x,           // x position.
+			 y,           // y position.
+			 SIZE,        // width.
+			 SIZE,        // height.
+			 hWnd,        // Parent window.
+			 (HMENU)BTNS, // Id.
+			 hinst,       // handle to application instance
+			 NULL);       // Pointer not needed.
+	}
+
+	// Create three rows of keyboard buttons
 
 	int j;
 	static char s[] = " ";
 
-	for (i = 0; i != LENGTH(display); i++)
+	for (i = 0; i < LENGTH(display); i++)
 	{
-	    for (j = 0; j != ((i == 1)? LENGTH(display[i]):
+	    for (j = 0; j < ((i == 1)? LENGTH(display[i]):
 			      LENGTH(display[i]) - 1); j++)
 	    {
 		int x = (i == 1)? 43 + 44 * j: 65 + 44 * j;
@@ -643,8 +723,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Colour static text, defeat DefWindowProc() by capturing
 	// this message. Changed background colour instead.
 
-//     case WM_CTLCOLORSTATIC:
-// 	break;
+    case WM_CTLCOLORSTATIC:
+	return (int) GetSysColorBrush(COLOR_WINDOW);
+	break;
 
 	// Disable menus by capturing this message
 
@@ -711,9 +792,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Reset all the buttons
 
-	for (i = 0; i != LENGTH(buttons); i++)
+	for (i = 0; i < LENGTH(buttons); i++)
 	{
-	    for (j = 0; j != LENGTH(buttons[i]); j++)
+	    for (j = 0; j < LENGTH(buttons[i]); j++)
 	    {
 		if (buttons[i][j])
 		    buttons[i][j] = FALSE;
@@ -840,6 +921,7 @@ UINT ChangeInstrument(HWND hinst)
 
     for (i = 0; i < LENGTH(buttons); i++)
 	ShortMessage(CHANGE + i, instrument, 0);
+	ShortMessage(CHANGE + LENGTH(buttons), instrument, 0);
 }
 
 // Reverse buttons
@@ -937,9 +1019,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (i = 0; i != LENGTH(buttons); i++)
+	    for (i = 0; i < LENGTH(buttons); i++)
 	    {
-		for (j = 0; j != LENGTH(buttons[i]); j++)
+		for (j = 0; j < LENGTH(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -967,6 +1049,22 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    }
 		}
 	    }
+
+	    for (i = 0; i < LENGTH(bass); i++)
+	    {
+		if (bass[i])
+		{
+		    // Play chord
+
+		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		    int note =  chords[key][k][bellows][0];
+		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+
+		    note =  chords[key][k][bellows][1];
+		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		}
+	    }
 	    return;
 	}
 
@@ -976,9 +1074,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Look up the key code in the keyboard table
 
-	for (i = 0; i != LENGTH(keyboard); i++)
+	for (i = 0; i < LENGTH(keyboard); i++)
 	{
-	    for (j = 0; j != LENGTH(keyboard[i]); j++)
+	    for (j = 0; j < LENGTH(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && !buttons[i][j])
 		{
@@ -1008,6 +1106,27 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    ShortMessage(NOTEON + i, note, volume);
 		    return;
 		}
+	    }
+	}
+
+	// Check the bass keys
+
+	for (i = 0; i < LENGTH(basskeys); i++)
+	{
+	    if (w == basskeys[i] && !bass[i])
+	    {
+		bass[i] = TRUE;
+		SendMessage(bassdisplay[i], BM_SETSTATE, TRUE, 0);
+
+		// Play chord
+
+		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		int note = chords[key][k][bellows][0];
+		ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+
+		note = chords[key][k][bellows][1];
+		ShortMessage(NOTEON + LENGTH(buttons), note, volume);
 	    }
 	}
     }
@@ -1041,9 +1160,9 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (i = 0; i != LENGTH(buttons); i++)
+	    for (i = 0; i < LENGTH(buttons); i++)
 	    {
-		for (j = 0; j != LENGTH(buttons[i]); j++)
+		for (j = 0; j < LENGTH(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -1071,15 +1190,31 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    }
 		}
 	    }
+
+	    for (i = 0; i < LENGTH(bass); i++)
+	    {
+		if (bass[i])
+		{
+		    // Play chord
+
+		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		    int note =  chords[key][k][bellows][0];
+		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+
+		    note =  chords[key][k][bellows][1];
+		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		}
+	    }
 	    return;
 	}
 
 	// Check keyboard
 
     default:
-	for (i = 0; i != LENGTH(keyboard); i++)
+	for (i = 0; i < LENGTH(keyboard); i++)
 	{
-	    for (j = 0; j != LENGTH(keyboard[i]); j++)
+	    for (j = 0; j < LENGTH(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && buttons[i][j])
 		{
@@ -1109,6 +1244,27 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    ShortMessage(NOTEOFF + i, note, volume);
 		    return;
 		}
+	    }
+	}
+
+	// Check the bass keys
+
+	for (i = 0; i < LENGTH(basskeys); i++)
+	{
+	    if (w == basskeys[i] && bass[i])
+	    {
+		bass[i] = FALSE;
+		SendMessage(bassdisplay[i], BM_SETSTATE, FALSE, 0);
+
+		// Stop chord
+
+		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		int note = chords[key][k][bellows][0];
+		ShortMessage(NOTEOFF + LENGTH(buttons), note, volume);
+
+		note = chords[key][k][bellows][1];
+		ShortMessage(NOTEOFF + LENGTH(buttons), note, volume);
 	    }
 	}
     }
