@@ -792,6 +792,15 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Reset all the buttons
 
+	for (i = 0; i < LENGTH(bass); i++)
+	{
+	    if (bass[i])
+		bass[i] = FALSE;
+
+	    if (SendMessage(bassdisplay[i], BM_GETSTATE, 0, 0))
+		SendMessage(bassdisplay[i], BM_SETSTATE, FALSE, 0);
+	}
+
 	for (i = 0; i < LENGTH(buttons); i++)
 	{
 	    for (j = 0; j < LENGTH(buttons[i]); j++)
@@ -1059,10 +1068,10 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
 
 		    int note =  chords[key][k][bellows][0];
-		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		    ShortMessage(NOTEON + ROWS, note, volume);
 
 		    note =  chords[key][k][bellows][1];
-		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		    ShortMessage(NOTEON + ROWS, note, volume);
 		}
 	    }
 	    return;
@@ -1123,10 +1132,10 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
 
 		int note = chords[key][k][bellows][0];
-		ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		ShortMessage(NOTEON + ROWS, note, volume);
 
 		note = chords[key][k][bellows][1];
-		ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		ShortMessage(NOTEON + ROWS, note, volume);
 	    }
 	}
     }
@@ -1200,10 +1209,10 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
 
 		    int note =  chords[key][k][bellows][0];
-		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		    ShortMessage(NOTEON + ROWS, note, volume);
 
 		    note =  chords[key][k][bellows][1];
-		    ShortMessage(NOTEON + LENGTH(buttons), note, volume);
+		    ShortMessage(NOTEON + ROWS, note, volume);
 		}
 	    }
 	    return;
@@ -1261,10 +1270,10 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
 
 		int note = chords[key][k][bellows][0];
-		ShortMessage(NOTEOFF + LENGTH(buttons), note, volume);
+		ShortMessage(NOTEOFF + ROWS, note, volume);
 
 		note = chords[key][k][bellows][1];
-		ShortMessage(NOTEOFF + LENGTH(buttons), note, volume);
+		ShortMessage(NOTEOFF + ROWS, note, volume);
 	    }
 	}
     }

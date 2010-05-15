@@ -36,8 +36,9 @@
 
 // Buttons
 
-#define ROWS     3
-#define BUTTONS 11
+#define ROWS         3
+#define BUTTONS     11
+#define BASSBUTTONS 12
 
 // Button size
 
@@ -62,32 +63,47 @@ HIViewID kHIViewIDKey =
 // Key IDs
 
 enum {
-    kKeyboardAKey     = 0x00,
-    kKeyboardBKey     = 0x0b,
-    kKeyboardCKey     = 0x08,
-    kKeyboardDKey     = 0x02,
-    kKeyboardEKey     = 0x0e,
-    kKeyboardFKey     = 0x03,
-    kKeyboardGKey     = 0x05,
-    kKeyboardHKey     = 0x04,
-    kKeyboardIKey     = 0x22,
-    kKeyboardJKey     = 0x26,
-    kKeyboardKKey     = 0x28,
-    kKeyboardLKey     = 0x25,
-    kKeyboardMKey     = 0x2e,
-    kKeyboardNKey     = 0x2d,
-    kKeyboardOKey     = 0x1f,
-    kKeyboardPKey     = 0x23,
-    kKeyboardQKey     = 0x0c,
-    kKeyboardRKey     = 0x0f,
-    kKeyboardSKey     = 0x01,
-    kKeyboardTKey     = 0x11,
-    kKeyboardUKey     = 0x20,
-    kKeyboardVKey     = 0x09,
-    kKeyboardWKey     = 0x0d,
-    kKeyboardXKey     = 0x07,
-    kKeyboardYKey     = 0x10,
-    kKeyboardZKey     = 0x06,
+    kKeyboardAKey = 0x00,
+    kKeyboardBKey = 0x0b,
+    kKeyboardCKey = 0x08,
+    kKeyboardDKey = 0x02,
+    kKeyboardEKey = 0x0e,
+    kKeyboardFKey = 0x03,
+    kKeyboardGKey = 0x05,
+    kKeyboardHKey = 0x04,
+    kKeyboardIKey = 0x22,
+    kKeyboardJKey = 0x26,
+    kKeyboardKKey = 0x28,
+    kKeyboardLKey = 0x25,
+    kKeyboardMKey = 0x2e,
+    kKeyboardNKey = 0x2d,
+    kKeyboardOKey = 0x1f,
+    kKeyboardPKey = 0x23,
+    kKeyboardQKey = 0x0c,
+    kKeyboardRKey = 0x0f,
+    kKeyboardSKey = 0x01,
+    kKeyboardTKey = 0x11,
+    kKeyboardUKey = 0x20,
+    kKeyboardVKey = 0x09,
+    kKeyboardWKey = 0x0d,
+    kKeyboardXKey = 0x07,
+    kKeyboardYKey = 0x10,
+    kKeyboardZKey = 0x06,
+
+    kKeyboardF1Key  = 0x7a,
+    kKeyboardF2Key  = 0x78,
+    kKeyboardF3Key  = 0x63,
+    kKeyboardF4Key  = 0x76,
+
+    kKeyboardF5Key  = 0x60,
+    kKeyboardF6Key  = 0x61,
+    kKeyboardF7Key  = 0x62,
+    kKeyboardF8Key  = 0x64,
+
+    kKeyboardF9Key  = 0x65,
+    kKeyboardF10Key = 0x6d,
+    kKeyboardF11Key = 0x67,
+    kKeyboardF12Key = 0x6f,
 
     kKeyboardEscapeKey = 0x35,
     kKeyboardSpaceKey  = 0x31,
@@ -178,11 +194,11 @@ char *keys[] =
     {"F/Eb/Bb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#"};
 
 int keyvals[LENGTH(keys)][ROWS] =
-    {{ 3, -2, -7},
-     { 5,  0, -5},
-     { 7,  2, -3},
-     { 7,  2,  1},
-     { 1,  0, -1}};
+    {{ 3, -2, -7},  // F/Bb/Eb
+     { 5,  0, -5},  // G/C/F
+     { 7,  2, -3},  // A/D/G
+     { 7,  2,  1},  // C#/D/G
+     { 1,  0, -1}}; // B/C/C#
 
 //      Eb  Bb   F   C   G   D   A
 //     { 3, -2,  5,  0, -5,  2, -3};
@@ -226,6 +242,22 @@ int keyboard[3][11] =
       kKeyboardSlashKey,
       -1}};
 
+int basskeys[] =
+    {kKeyboardF1Key,
+     kKeyboardF2Key,
+     kKeyboardF3Key,
+     kKeyboardF4Key,
+
+     kKeyboardF5Key,
+     kKeyboardF6Key,
+     kKeyboardF7Key,
+     kKeyboardF8Key,
+
+     kKeyboardF9Key,
+     kKeyboardF10Key,
+     kKeyboardF11Key,
+     kKeyboardF12Key};
+
 char *keytops[3] =
     {"WERTYUIOP-",
      "ASDFGHJKL--",
@@ -246,11 +278,64 @@ int notes[BUTTONS][2] =
      {88, 83},
      {91, 86}}; 
 
+// Chords
+
+int chords[LENGTH(keys)][BASSBUTTONS][2][2] =
+    {
+	// F/Bb/Eb
+
+	{{{41, 53}, {36, 48}}, {{65, 60}, {60, 67}},  //  F/C
+	 {{38, 50}, {43, 55}}, {{62, 69}, {67, 62}},  //  D/G
+	 {{46, 58}, {41, 53}}, {{70, 65}, {65, 60}},  // Bb/F
+	 {{43, 55}, {36, 48}}, {{67, 62}, {60, 67}},  //  G/C
+	 {{39, 51}, {46, 58}}, {{63, 70}, {70, 65}},  // Eb/Bb
+	 {{44, 56}, {44, 56}}, {{68, 63}, {68, 63}}}, // Ab/Ab
+
+	// G/C/F
+
+	{{{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{40, 52}, {45, 57}}, {{64, 71}, {69, 64}},  //  E/A
+	 {{36, 48}, {43, 55}}, {{60, 67}, {67, 62}},  //  C/G
+	 {{45, 57}, {38, 50}}, {{69, 64}, {62, 69}},  //  A/D
+	 {{41, 53}, {36, 48}}, {{65, 60}, {60, 67}},  //  F/C
+	 {{46, 58}, {46, 58}}, {{70, 65}, {70, 65}}}, // Bb/Bb
+
+	// A/D/G
+
+	{{{45, 57}, {40, 52}}, {{69, 64}, {64, 71}},  //  A/E
+	 {{42, 54}, {47, 59}}, {{66, 61}, {71, 66}},  // F#/B
+	 {{38, 50}, {45, 57}}, {{62, 69}, {69, 64}},  //  D/A
+	 {{47, 59}, {40, 52}}, {{71, 66}, {64, 71}},  //  B/E
+	 {{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{36, 48}, {36, 48}}, {{60, 67}, {60, 67}}}, //  C/C
+
+	// C#/D/G
+
+	{{{45, 57}, {40, 52}}, {{69, 64}, {64, 71}},  //  A/E
+	 {{42, 54}, {47, 59}}, {{66, 61}, {71, 66}},  // F#/B
+	 {{38, 50}, {45, 57}}, {{62, 69}, {69, 64}},  //  D/A
+	 {{47, 59}, {40, 52}}, {{71, 66}, {64, 71}},  //  B/E
+	 {{43, 55}, {38, 50}}, {{67, 62}, {62, 69}},  //  G/D
+	 {{36, 48}, {36, 48}}, {{60, 67}, {60, 67}}}, //  C/C
+
+	// B/C/C#
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+    };
+
 // Synthesizer unit
 
 AudioUnit synthUnit;
 
 // Buttons
+
+Boolean bass[BASSBUTTONS];
+HIViewRef bassdisplay[BASSBUTTONS];
 
 Boolean buttons[ROWS][BUTTONS];
 HIViewRef display[ROWS][BUTTONS];
@@ -539,7 +624,7 @@ int main(int argc, char *argv[])
 
     // Group box bounds
 
-    bounds.bottom = 92;
+    bounds.bottom = 48;
     bounds.right  = 550;
 
     // Create group box
@@ -571,7 +656,7 @@ int main(int argc, char *argv[])
     // Place in the group box
 
     HIViewAddSubview(group, text);
-    HIViewPlaceInSuperviewAt(text, 0, 26);
+    HIViewPlaceInSuperviewAt(text, 0, 8);
 
     // Bounds of text
 
@@ -587,11 +672,11 @@ int main(int argc, char *argv[])
     // Place in the group box
 
     HIViewAddSubview(group, text);
-    HIViewPlaceInSuperviewAt(text, 0, 50);
+    HIViewPlaceInSuperviewAt(text, 0, 24);
 
     // Group box bounds
 
-    bounds.bottom = 152;
+    bounds.bottom = 196;
     bounds.right  = 550;
 
     // Create group box
@@ -601,7 +686,7 @@ int main(int argc, char *argv[])
     // Place in the window
 
     HIViewAddSubview(content, group);
-    HIViewPlaceInSuperviewAt(group, 20, 244);
+    HIViewPlaceInSuperviewAt(group, 20, 200);
 
     int j;
     static char s[] = " ";
@@ -611,6 +696,26 @@ int main(int argc, char *argv[])
     bounds.bottom = SIZE;
     bounds.right  = SIZE;
 
+    // Create row of bass buttons
+
+    for (i = 0; i < LENGTH(bassdisplay); i++)
+    {
+	int x = 15 + 44 * i;
+	int y = 15;
+
+	// Create button
+
+	CreateBevelButtonControl(window, &bounds, NULL,
+				 kControlBevelButtonNormalBevel,
+				 kControlBehaviorPushbutton,
+				 NULL, 0, 0, 0, &bassdisplay[i]);
+
+	// Place in the group box
+
+	HIViewAddSubview(group, bassdisplay[i]);
+	HIViewPlaceInSuperviewAt(bassdisplay[i], x, y);
+    }
+
     // Create three rows of buttons
 
     for (i = 0; i < LENGTH(display); i++)
@@ -618,8 +723,8 @@ int main(int argc, char *argv[])
 	for (j = 0; j < ((i == 1)? LENGTH(display[i]):
 			 LENGTH(display[i]) - 1); j++)
 	{
-	    int x = (i == 1)? 38 + 44 * j: 60 + 44 * j;
-	    int y = 15 + 44 * i;
+	    int x = (i == 1)? 37 + 44 * j: 59 + 44 * j;
+	    int y = 59 + 44 * i;
 	    s[0] = keytops[i][j];
 
 	    // Create button
@@ -649,7 +754,7 @@ int main(int argc, char *argv[])
     // Place in the group box
 
     HIViewAddSubview(group, spacebar);
-    HIViewPlaceInSuperviewAt(spacebar, 16, 103);
+    HIViewPlaceInSuperviewAt(spacebar, 16, 147);
 
     // Group box bounds, wider than the window to hide rounded corners
 
@@ -851,7 +956,6 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
     ProcessSerialNumber us;
     Boolean same;
     UInt32 kind;
-    int i, j;
 
     // Get event kind
 
@@ -883,8 +987,31 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 
         if (!same)
         {
+	    int i, j;
+
             // Turn all the notes off and reset all the buttons that
             // are down
+
+	    for (i = 0; i < LENGTH(bass); i++)
+	    {
+		// Bass buttons
+
+		if (bass[i])
+		{
+		    bass[i] = false;
+		    HIViewSetValue(bassdisplay[i], false);
+
+		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		    int note = chords[key][k][bellows][0];
+		    MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + ROWS,
+					 note, 0, 0);
+
+		    note = chords[key][k][bellows][1];
+		    MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + ROWS,
+					 note, 0, 0);
+		}
+	    }
 
             for (i = 0; i < LENGTH(buttons); i++)
             {
@@ -895,10 +1022,27 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
                     if (buttons[i][j])
                     {
                         buttons[i][j] = false;
-                        HIViewSetValue(display[j][j], false);
+                        HIViewSetValue(display[i][j], false);
 
-                        int note = notes[j][bellows] + keyvals[key][i];
-                        MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff,
+			int k;
+
+			switch (i)
+			{
+			case 0:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    break;
+
+			case 1:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    break;
+
+			case 2:
+			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    break;
+			}
+
+                        int note = notes[k][bellows] + keyvals[key][i];
+                        MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + i,
                                              note, 0, 0);
                     }
                 }
@@ -909,6 +1053,7 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
                 // Space bar button
 
                 bellows = false;
+                HIViewSetValue(spacebar, false);
             }
         }
         break;
@@ -1255,6 +1400,36 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                         }
 		    }
 		}
+
+                for (i = 0; i < LENGTH(bass); i++)
+                {
+                    if (bass[i])
+                    {
+                        // Play chord
+
+                        int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+                        int note =  chords[key][k][!bellows][0];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOff + ROWS,
+                                             note, volume, 0);
+
+                        note =  chords[key][k][!bellows][1];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOff + ROWS,
+                                             note, volume, 0);
+
+			note =  chords[key][k][bellows][0];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOn + ROWS,
+                                             note, volume, 0);
+
+                        note =  chords[key][k][bellows][1];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOn + ROWS,
+                                             note, volume, 0);
+                    }
+                }
             }
             break;
 
@@ -1298,6 +1473,27 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 					     note, volume, 0);
 			return noErr;
 		    }
+		}
+	    }
+
+	    for (i = 0; i < LENGTH(basskeys); i++)
+	    {
+		if (basskeys[i] == keyCode && !bass[i])
+		{
+		    bass[i] = true;
+		    HIViewSetValue(bassdisplay[i], true);
+
+		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		    int note =  chords[key][k][bellows][0];
+		    MusicDeviceMIDIEvent(synthUnit,
+					 kMidiMessageNoteOn + ROWS,
+					 note, volume, 0);
+
+		    note =  chords[key][k][bellows][1];
+		    MusicDeviceMIDIEvent(synthUnit,
+					 kMidiMessageNoteOn + ROWS,
+					 note, volume, 0);
 		}
 	    }
 	    break;
@@ -1368,6 +1564,36 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                         }
 		    }
 		}
+
+                for (i = 0; i < LENGTH(bass); i++)
+                {
+                    if (bass[i])
+                    {
+                        // Play chord
+
+                        int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+                        int note =  chords[key][k][!bellows][0];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOff + ROWS,
+                                             note, volume, 0);
+
+                        note =  chords[key][k][!bellows][1];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOff + ROWS,
+                                             note, volume, 0);
+
+			note =  chords[key][k][bellows][0];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOn + ROWS,
+                                             note, volume, 0);
+
+                        note =  chords[key][k][bellows][1];
+                        MusicDeviceMIDIEvent(synthUnit,
+                                             kMidiMessageNoteOn + ROWS,
+                                             note, volume, 0);
+                    }
+                }
             }
             break;
 
@@ -1413,6 +1639,27 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		    }
 		}
 	    }
+
+	    for (i = 0; i < LENGTH(basskeys); i++)
+	    {
+		if (basskeys[i] == keyCode && bass[i])
+		{
+		    bass[i] = false;
+		    HIViewSetValue(bassdisplay[i], false);
+
+		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+
+		    int note = chords[key][k][bellows][0];
+		    MusicDeviceMIDIEvent(synthUnit,
+					 kMidiMessageNoteOff + ROWS,
+					 note, volume, 0);
+
+		    note = chords[key][k][bellows][1];
+		    MusicDeviceMIDIEvent(synthUnit,
+					 kMidiMessageNoteOff + ROWS,
+					 note, volume, 0);
+		}
+	    }
 	    break;
 	}
 	break;
@@ -1430,12 +1677,14 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
 void ChangeInstrument(int instrument)
 {
-    // Send a program change message on all three channels
+    // Send a program change message on all four channels
 
     MusicDeviceMIDIEvent(synthUnit, kMidiMessageProgramChange + 0,
                          instrument, 0, 0);
     MusicDeviceMIDIEvent(synthUnit, kMidiMessageProgramChange + 1,
                          instrument, 0, 0);
     MusicDeviceMIDIEvent(synthUnit, kMidiMessageProgramChange + 2,
+                         instrument, 0, 0);
+    MusicDeviceMIDIEvent(synthUnit, kMidiMessageProgramChange + 3,
                          instrument, 0, 0);
 }
