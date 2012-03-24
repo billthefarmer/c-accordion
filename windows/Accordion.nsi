@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Accordion"
-!define PRODUCT_VERSION "1.0"
+!define PRODUCT_VERSION "1.02"
 !define PRODUCT_PUBLISHER "Bill Farmer"
 !define PRODUCT_WEB_SITE "http://accordion.googlecode.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Accordion.exe"
@@ -48,7 +48,7 @@ var ICONS_GROUP
 ; MUI end ------
 
 Name "${PRODUCT_NAME}"
-OutFile "SetupAccordion.exe"
+OutFile "Setup${PRODUCT_NAME}-${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\Accordion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show

@@ -69,54 +69,54 @@ HMIDIOUT hmdo;
 // List of midi instruments
 
 char *instruments[] =
-    {"Acoustic Grand Piano", "Bright Acoustic Piano",
-     "Electric Grand Piano", "Honky-tonk Piano",
-     "Electric Piano 1", "Electric Piano 2", "Harpsichord",
-     "Clavi", "Celesta", "Glockenspiel", "Music Box",
-     "Vibraphone", "Marimba", "Xylophone", "Tubular Bells",
-     "Dulcimer", "Drawbar Organ", "Percussive Organ",
-     "Rock Organ", "Church Organ", "Reed Organ",
-     "Accordion", "Harmonica", "Tango Accordion",
-     "Acoustic Guitar (nylon)", "Acoustic Guitar (steel)",
-     "Electric Guitar (jazz)", "Electric Guitar (clean)",
-     "Electric Guitar (muted)", "Overdriven Guitar",
-     "Distortion Guitar", "Guitar harmonics",
-     "Acoustic Bass", "Electric Bass (finger)",
-     "Electric Bass (pick)", "Fretless Bass",
-     "Slap Bass 1", "Slap Bass 2", "Synth Bass 1",
-     "Synth Bass 2", "Violin", "Viola", "Cello",
-     "Contrabass", "Tremolo Strings", "Pizzicato Strings",
-     "Orchestral Harp", "Timpani", "String Ensemble 1",
-     "String Ensemble 2", "SynthStrings 1", "SynthStrings 2",
-     "Choir Aahs", "Voice Oohs", "Synth Voice",
-     "Orchestra Hit", "Trumpet", "Trombone", "Tuba",
-     "Muted Trumpet", "French Horn", "Brass Section",
-     "SynthBrass 1", "SynthBrass 2", "Soprano Sax",
-     "Alto Sax", "Tenor Sax", "Baritone Sax", "Oboe",
-     "English Horn", "Bassoon", "Clarinet", "Piccolo",
-     "Flute", "Recorder", "Pan Flute", "Blown Bottle",
-     "Shakuhachi", "Whistle", "Ocarina", "Lead 1 (square)",
-     "Lead 2 (sawtooth)", "Lead 3 (calliope)", "Lead 4 (chiff)",
-     "Lead 5 (charang)", "Lead 6 (voice)", "Lead 7 (fifths)",
-     "Lead 8 (bass + lead)", "Pad 1 (new age)", "Pad 2 (warm)",
-     "Pad 3 (polysynth)", "Pad 4 (choir)", "Pad 5 (bowed)",
-     "Pad 6 (metallic)", "Pad 7 (halo)", "Pad 8 (sweep)",
-     "FX 1 (rain)", "FX 2 (soundtrack)", "FX 3 (crystal)",
-     "FX 4 (atmosphere)", "FX 5 (brightness)", "FX 6 (goblins)",
-     "FX 7 (echoes)", "FX 8 (sci-fi)", "Sitar", "Banjo",
-     "Shamisen", "Koto", "Kalimba", "Bag pipe", "Fiddle",
-     "Shanai", "Tinkle Bell", "Agogo", "Steel Drums",
-     "Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum",
-     "Reverse Cymbal", "Guitar Fret Noise", "Breath Noise",
-     "Seashore", "Bird Tweet", "Telephone Ring",
-     "Helicopter", "Applause", "Gunshot"};
+    {" Acoustic Grand Piano", " Bright Acoustic Piano",
+     " Electric Grand Piano", " Honky-tonk Piano",
+     " Electric Piano 1", " Electric Piano 2", " Harpsichord",
+     " Clavi", " Celesta", " Glockenspiel", " Music Box",
+     " Vibraphone", " Marimba", " Xylophone", " Tubular Bells",
+     " Dulcimer", " Drawbar Organ", " Percussive Organ",
+     " Rock Organ", " Church Organ", " Reed Organ",
+     " Accordion", " Harmonica", " Tango Accordion",
+     " Acoustic Guitar (nylon)", " Acoustic Guitar (steel)",
+     " Electric Guitar (jazz)", " Electric Guitar (clean)",
+     " Electric Guitar (muted)", " Overdriven Guitar",
+     " Distortion Guitar", " Guitar harmonics",
+     " Acoustic Bass", " Electric Bass (finger)",
+     " Electric Bass (pick)", " Fretless Bass",
+     " Slap Bass 1", " Slap Bass 2", " Synth Bass 1",
+     " Synth Bass 2", " Violin", " Viola", " Cello",
+     " Contrabass", " Tremolo Strings", " Pizzicato Strings",
+     " Orchestral Harp", " Timpani", " String Ensemble 1",
+     " String Ensemble 2", " SynthStrings 1", " SynthStrings 2",
+     " Choir Aahs", " Voice Oohs", " Synth Voice",
+     " Orchestra Hit", " Trumpet", " Trombone", " Tuba",
+     " Muted Trumpet", " French Horn", " Brass Section",
+     " SynthBrass 1", " SynthBrass 2", " Soprano Sax",
+     " Alto Sax", " Tenor Sax", " Baritone Sax", " Oboe",
+     " English Horn", " Bassoon", " Clarinet", " Piccolo",
+     " Flute", " Recorder", " Pan Flute", " Blown Bottle",
+     " Shakuhachi", " Whistle", " Ocarina", " Lead 1 (square)",
+     " Lead 2 (sawtooth)", " Lead 3 (calliope)", " Lead 4 (chiff)",
+     " Lead 5 (charang)", " Lead 6 (voice)", " Lead 7 (fifths)",
+     " Lead 8 (bass + lead)", " Pad 1 (new age)", " Pad 2 (warm)",
+     " Pad 3 (polysynth)", " Pad 4 (choir)", " Pad 5 (bowed)",
+     " Pad 6 (metallic)", " Pad 7 (halo)", " Pad 8 (sweep)",
+     " FX 1 (rain)", " FX 2 (soundtrack)", " FX 3 (crystal)",
+     " FX 4 (atmosphere)", " FX 5 (brightness)", " FX 6 (goblins)",
+     " FX 7 (echoes)", " FX 8 (sci-fi)", " Sitar", " Banjo",
+     " Shamisen", " Koto", " Kalimba", " Bag pipe", " Fiddle",
+     " Shanai", " Tinkle Bell", " Agogo", " Steel Drums",
+     " Woodblock", " Taiko Drum", " Melodic Tom", " Synth Drum",
+     " Reverse Cymbal", " Guitar Fret Noise", " Breath Noise",
+     " Seashore", " Bird Tweet", " Telephone Ring",
+     " Helicopter", " Applause", " Gunshot"};
 
 int instrument;
 
 // List of keys and offset values
 
 char *keys[] =
-    {"F/Bb/Eb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#"};
+    {" F/Bb/Eb", " G/C/F", " A/D/G", " C#/D/G", " B/C/C#"};
 
 int keyvals[LENGTH(keys)][ROWS] =
     {{ 3, -2, -7},  // F/Bb/Eb
@@ -132,15 +132,43 @@ UINT key;
 
 // Keyboard
 
-BYTE keyboard[3][11] =
+BYTE keyboard[ROWS][BUTTONS] =
     {{'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 0xdb},
      {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 0xba, 0xc0},
      {'Z', 'X', 'C', 'V', 'B', 'N', 'M', 0xbc, 0xbe, 0xbf}};
 
-char *keytops[3] =
-    {"WERTYUIOP-",
-     "ASDFGHJKL--",
-     "ZXCVBNM---"};
+char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
+    {
+	// F/Bb/Eb
+
+	{{"G", "Bb", "Eb", "G", "Bb", "Eb", "G", "Bb", "Eb", "G"},
+	 {"D", "F", "Bb", "D", "F", "Bb", "D", "F", "Bb", "D", "F"},
+	 {"C", "F", "A", "C", "F", "A", "C", "F", "A", "C"}},
+
+	// G/C/F
+
+	{{"A", "C", "F", "A", "C", "F", "A", "C", "F", "A"},
+	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+	 {"D", "G", "B", "D", "G", "B", "D", "G", "B", "D"}},
+
+	// A/D/G
+
+	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+	 {"E", "A", "C#", "E", "A", "C#", "E", "A", "C#", "E"}},
+
+	// C#/D/G
+
+	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+	 {"G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F", "G#"}},
+
+	// B/C/C#
+
+	{{"F", "G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F"},
+	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}}
+    };
 
 int basskeys[] =
   {VK_F1, VK_F2,  VK_F3,  VK_F4,
@@ -280,8 +308,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	wc.cbWndExtra = 0;                // no extra window memory
 	wc.hInstance = hInstance;         // handle to instance
 	wc.hIcon =
-	    LoadIcon(NULL,
-		     IDI_WINLOGO);        // predefined app. icon
+	    LoadIcon(hInstance,
+		     "Accordion");        // Accordion icon
 	wc.hCursor =
 	    LoadCursor(NULL,
 		       IDC_ARROW);        // predefined arrow
@@ -461,14 +489,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Add the instrument names
 
-	int i;
-
-	for (i = 0; i < LENGTH(instruments); i++)
+	for (int i = 0; i < LENGTH(instruments); i++)
 	    SendMessage(inst, CB_ADDSTRING, 0, (LPARAM)instruments[i]);
 
 	// Select the Accordion
 
-	SendMessage(inst, CB_SELECTSTRING, -1, (LPARAM)"Accordion");
+	SendMessage(inst, CB_SELECTSTRING, -1, (LPARAM)" Accordion");
 
 	// Create reverse tickbox
 
@@ -520,12 +546,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Add the keys
 
-	for (i = 0; i < LENGTH(keys); i++)
+	for (int i = 0; i < LENGTH(keys); i++)
 	    SendMessage(hkey, CB_ADDSTRING, 0, (LPARAM)keys[i]);
 
-	// Select C
+	// Select A/D/G
 
-	SendMessage(hkey, CB_SELECTSTRING, -1, (LPARAM)"A/D/G");
+	SendMessage(hkey, CB_SELECTSTRING, -1, (LPARAM)" A/D/G");
 
 	// Create text
 
@@ -641,7 +667,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Create a row of bass buttons
 
-	for (i = 0; i < LENGTH(bassdisplay); i++)
+	for (int i = 0; i < LENGTH(bassdisplay); i++)
 	{
 	  int x = 21 + 44 * i;
 	  int y = bottom - 186;
@@ -663,21 +689,17 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Create three rows of keyboard buttons
 
-	int j;
-	static char s[] = " ";
-
-	for (i = 0; i < LENGTH(display); i++)
+	for (int i = 0; i < LENGTH(display); i++)
 	{
-	    for (j = 0; j < ((i == 1)? LENGTH(display[i]):
+	    for (int j = 0; j < ((i == 1)? LENGTH(display[i]):
 			      LENGTH(display[i]) - 1); j++)
 	    {
 		int x = (i == 1)? 43 + 44 * j: 65 + 44 * j;
 		int y = bottom + 44 * i - 142;
-		s[0] = keytops[i][j];
 
 		display[i][j] =
 		    CreateWindow(WC_BUTTON,  // Predefined class.
-				 s,          // Text.
+				 NULL,       // No text.
 				 WS_VISIBLE | WS_CHILD |
 				 BS_PUSHBUTTON, // Styles.
 				 x,           // x position.
@@ -792,7 +814,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Reset all the buttons
 
-	for (i = 0; i < LENGTH(bass); i++)
+	for (int i = 0; i < LENGTH(bass); i++)
 	{
 	    if (bass[i])
 		bass[i] = FALSE;
@@ -801,9 +823,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 		SendMessage(bassdisplay[i], BM_SETSTATE, FALSE, 0);
 	}
 
-	for (i = 0; i < LENGTH(buttons); i++)
+	for (int i = 0; i < LENGTH(buttons); i++)
 	{
-	    for (j = 0; j < LENGTH(buttons[i]); j++)
+	    for (int j = 0; j < LENGTH(buttons[i]); j++)
 	    {
 		if (buttons[i][j])
 		    buttons[i][j] = FALSE;
@@ -925,10 +947,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 UINT ChangeInstrument(HWND hinst)
 {
-    int i;
     instrument = SendMessage(hinst, CB_GETCURSEL, 0, 0);
 
-    for (i = 0; i < LENGTH(buttons); i++)
+    for (int i = 0; i < LENGTH(buttons); i++)
 	ShortMessage(CHANGE + i, instrument, 0);
 	ShortMessage(CHANGE + LENGTH(buttons), instrument, 0);
 }
@@ -942,13 +963,69 @@ UINT ReverseButtons(HWND hrev)
     reverse = !reverse;
     SendMessage(hrev, BM_SETCHECK,
 		reverse? BST_CHECKED: BST_UNCHECKED, 0);
+
+    // Change display
+
+    for (int i = 0; i < LENGTH(notetops[0]); i++)
+    {
+	for (int j = 0; j < LENGTH(notetops[0][0]); j++)
+	{
+	    int k;
+
+	    switch (i)
+	    {
+	    case 0:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		break;
+
+	    case 1:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 1: j;
+		break;
+
+	    case 2:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		break;
+	    }
+
+	    SetWindowText(display[i][j], notetops[key][i][k]);
+	}
+    }
 }
 
 // Change key
 
 UINT ChangeKey(HWND hkey)
 {
+    // Get key
+
     key = SendMessage(hkey, CB_GETCURSEL, 0, 0);
+
+    // Change display
+
+    for (int i = 0; i < LENGTH(notetops[0]); i++)
+    {
+	for (int j = 0; j < LENGTH(notetops[0][0]); j++)
+	{
+	    int k;
+
+	    switch (i)
+	    {
+	    case 0:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		break;
+
+	    case 1:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 1: j;
+		break;
+
+	    case 2:
+		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		break;
+	    }
+
+	    SetWindowText(display[i][j], notetops[key][i][k]);
+	}
+    }
 }
 
 UINT ChangeVolume(WPARAM wParam, LPARAM lParam)
@@ -986,7 +1063,7 @@ UINT ChangeVolume(WPARAM wParam, LPARAM lParam)
 	    break;
 
 	default:
-	    return;
+	    return FALSE;
 	}
 
 	// Set the new position
@@ -1004,8 +1081,6 @@ UINT CharPressed(WPARAM w, LPARAM l)
 
 UINT KeyDown(WPARAM w, LPARAM l)
 {
-    int i, j;
-
     // Switch on keycode
 
     switch (w)
@@ -1028,9 +1103,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (i = 0; i < LENGTH(buttons); i++)
+	    for (int i = 0; i < LENGTH(buttons); i++)
 	    {
-		for (j = 0; j < LENGTH(buttons[i]); j++)
+		for (int j = 0; j < LENGTH(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -1059,7 +1134,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		}
 	    }
 
-	    for (i = 0; i < LENGTH(bass); i++)
+	    for (int i = 0; i < LENGTH(bass); i++)
 	    {
 		if (bass[i])
 		{
@@ -1074,7 +1149,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    ShortMessage(NOTEON + ROWS, note, volume);
 		}
 	    }
-	    return;
+	    return FALSE;
 	}
 
 	// Check keyboard
@@ -1083,9 +1158,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Look up the key code in the keyboard table
 
-	for (i = 0; i < LENGTH(keyboard); i++)
+	for (int i = 0; i < LENGTH(keyboard); i++)
 	{
-	    for (j = 0; j < LENGTH(keyboard[i]); j++)
+	    for (int j = 0; j < LENGTH(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && !buttons[i][j])
 		{
@@ -1113,14 +1188,14 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 		    int note = notes[k][bellows] + keyvals[key][i];
 		    ShortMessage(NOTEON + i, note, volume);
-		    return;
+		    return FALSE;
 		}
 	    }
 	}
 
 	// Check the bass keys
 
-	for (i = 0; i < LENGTH(basskeys); i++)
+	for (int i = 0; i < LENGTH(basskeys); i++)
 	{
 	    if (w == basskeys[i] && !bass[i])
 	    {
@@ -1145,8 +1220,6 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 UINT KeyUp(WPARAM w, LPARAM l)
 {
-    int i, j;
-
     //Switch on keycode
 
     switch (w)
@@ -1169,9 +1242,9 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (i = 0; i < LENGTH(buttons); i++)
+	    for (int i = 0; i < LENGTH(buttons); i++)
 	    {
-		for (j = 0; j < LENGTH(buttons[i]); j++)
+		for (int j = 0; j < LENGTH(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -1200,7 +1273,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		}
 	    }
 
-	    for (i = 0; i < LENGTH(bass); i++)
+	    for (int i = 0; i < LENGTH(bass); i++)
 	    {
 		if (bass[i])
 		{
@@ -1215,15 +1288,15 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    ShortMessage(NOTEON + ROWS, note, volume);
 		}
 	    }
-	    return;
+	    return FALSE;
 	}
 
 	// Check keyboard
 
     default:
-	for (i = 0; i < LENGTH(keyboard); i++)
+	for (int i = 0; i < LENGTH(keyboard); i++)
 	{
-	    for (j = 0; j < LENGTH(keyboard[i]); j++)
+	    for (int j = 0; j < LENGTH(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && buttons[i][j])
 		{
@@ -1251,14 +1324,14 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 		    int note = notes[k][bellows] + keyvals[key][i];
 		    ShortMessage(NOTEOFF + i, note, volume);
-		    return;
+		    return FALSE;
 		}
 	    }
 	}
 
 	// Check the bass keys
 
-	for (i = 0; i < LENGTH(basskeys); i++)
+	for (int i = 0; i < LENGTH(basskeys); i++)
 	{
 	    if (w == basskeys[i] && bass[i])
 	    {
