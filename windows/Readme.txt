@@ -18,11 +18,12 @@ button in the top half of the window. The instruments drop down lets
 you choose what midi instrument you would like to attempt to play. The
 reverse check box lets you play widdershins. The key drop down lets
 you choose keys to play in. There is a choice of F/Bb/Eb, G/C/F,
-A/D/G, C#/D/G, B/C/C#. The keys default to A/D/G. More kays can be
-added by popular request, or you can hack the program yourself. The
-layout drop down lets you choose a layout. The volume slider lets you
-change the volume. The volume defaults to maximum. The quit button
-lets you give up, or you can click on the window close icon.
+A/D/G, C#/D/G, B/C/C#. C System and B System chromatic now added with
+button highlighting. The keys default to A/D/G. More kays can be added
+by popular request, or you can hack the program yourself. The notes
+click box lets you display notes on the buttons. The volume slider
+lets you change the volume. The volume defaults to maximum. The quit
+button lets you give up, or you can click on the window close icon.
 
 Playing
 =======
@@ -31,8 +32,9 @@ Hold the PC keyboard in a vertical position, so the keys are on the
 side you want to play the melody on. Adjust the reverse check box
 according to which hand you want to use. Press the keys as if they
 were accordion buttons, and press the space bar or escape key to
-emulate waggling the bellows. If you don't know how to play accordion
-see http://info.melodeon.net
+emulate waggling the bellows. You don't need to waggle the bellows in
+C System or B System mode. If you don't know how to play accordion see
+http://info.melodeon.net.
 
 Files
 =====

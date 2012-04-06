@@ -31,40 +31,51 @@
 
 // Tool ids
 
-#define INST 101
-#define REVS 102
-#define KEYS 103
-#define VOLM 104
-#define LAYT 105
-#define QUIT 106
-#define TXTS 107
-#define BTNS 108
-#define STAT 109
+enum
+    {INST = 101,
+     REVS,
+     KEYS,
+     VOLM,
+     NOTE,
+     QUIT,
+     TXTS,
+     BTNS,
+     STAT};
+
+// Types
+
+enum
+    {DIATONIC,
+     CHROMATIC};
 
 // Midi codes
 
-#define NOTEOFF 0x80
-#define NOTEON  0x90
-#define CHANGE  0xc0
+enum
+    {NOTEOFF = 0x80,
+     NOTEON  = 0x90,
+     CHANGE  = 0xc0};
 
 // Max volume
 
-#define MAXVOL 127
+enum
+    {MAXVOL = 127};
 
 // Buttons
 
-#define ROWS         3
-#define BUTTONS     11
-#define BASSBUTTONS 12
+enum
+    {ROWS        =  3,
+     BUTTONS     = 11,
+     BASSBUTTONS = 12};
 
 // Button size
 
-#define SIZE 34
+enum
+    {BUTTONSIZE = 34};
 
 // Global handles
 
 HINSTANCE hinst;
-HMIDIOUT hmdo;
+HMIDIOUT  hmdo;
 
 // List of midi instruments
 
@@ -116,26 +127,39 @@ int instrument;
 // List of keys and offset values
 
 char *keys[] =
-    {" F/Bb/Eb", " G/C/F", " A/D/G", " C#/D/G", " B/C/C#"};
+    {" F/Bb/Eb", " G/C/F", " A/D/G", " C#/D/G", " B/C/C#",
+     " C System", " B System"};
 
 int keyvals[LENGTH(keys)][ROWS] =
     {{ 3, -2, -7},  // F/Bb/Eb
      { 5,  0, -5},  // G/C/F
      { 7,  2, -3},  // A/D/G
      { 7,  2,  1},  // C#/D/G
-     { 1,  0, -1}}; // B/C/C#
+     { 1,  0, -1},  // B/C/C#
+     { 1,  0, -1},  // C System
+     { 2,  0, -2}}; // B System
 
 //      Eb  Bb   F   C   G   D   A
 //     { 3, -2,  5,  0, -5,  2, -3};
 
 UINT key;
 
-// Keyboard
+// Types
+
+BYTE types[LENGTH(keys)] =
+    {DIATONIC, DIATONIC, DIATONIC, DIATONIC,
+     DIATONIC, CHROMATIC, CHROMATIC};
+
+UINT type;
+
+// Keyboard keys
 
 BYTE keyboard[ROWS][BUTTONS] =
     {{'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 0xdb},
      {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 0xba, 0xc0},
      {'Z', 'X', 'C', 'V', 'B', 'N', 'M', 0xbc, 0xbe, 0xbf}};
+
+// Keyboard notes
 
 char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
     {
@@ -167,7 +191,19 @@ char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
 
 	{{"F", "G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F"},
 	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
-	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}}
+	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}},
+
+	// C System
+
+	{{"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"},
+	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+	 {"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"}},
+
+	// B System
+
+	{{"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"},
+	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+	 {"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"}}
     };
 
 int basskeys[] =
@@ -175,20 +211,31 @@ int basskeys[] =
    VK_F5, VK_F6,  VK_F7,  VK_F8,
    VK_F9, VK_F10, VK_F11, VK_F12};
 
-// Midi notes for 'C'
+// Midi notes for C Diatonic, G Chromatic
 
-BYTE notes[BUTTONS][2] =
-    {{52, 57},
-     {55, 59},
-     {60, 62},
-     {64, 65},
-     {67, 69},
-     {72, 71},
-     {76, 74},
-     {79, 77},
-     {84, 81},
-     {88, 83},
-     {91, 86}};
+BYTE notes[2][BUTTONS][2] =
+    {{{52, 57}, // C Diatonic
+      {55, 59},
+      {60, 62},
+      {64, 65},
+      {67, 69},
+      {72, 71},
+      {76, 74},
+      {79, 77},
+      {84, 81},
+      {88, 83},
+      {91, 86}},
+     {{55, 55}, // G Chromatic
+      {58, 58},
+      {61, 61},
+      {64, 64},
+      {67, 67},
+      {70, 70},
+      {73, 73},
+      {76, 76},
+      {79, 79},
+      {82, 82},
+      {85, 85}}};
 
 // Chords
 
@@ -238,6 +285,24 @@ BYTE chords[LENGTH(keys)][BASSBUTTONS][2][2] =
 	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
 	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
 	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+
+	// C System
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+
+	// B System
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
     };
 
 // Buttons
@@ -252,6 +317,10 @@ BOOL bellows;
 // Reverse value
 
 BOOL reverse;
+
+// Notes value
+
+BOOL shownotes;
 
 // Volume value
 
@@ -273,6 +342,8 @@ LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 
 UINT ChangeInstrument(HWND);
 UINT ReverseButtons(HWND);
+UINT DisplayNotes(HWND);
+UINT ChangeDisplay(VOID);
 UINT ChangeKey(HWND);
 UINT ChangeVolume(WPARAM, LPARAM);
 UINT CharPressed(WPARAM, LPARAM);
@@ -296,28 +367,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     if (!hPrevInstance)
     {
-	WNDCLASS wc;
-
 	// Fill in the window class structure with parameters
 	// that describe the main window.
 
-	wc.style =
-	    CS_HREDRAW | CS_VREDRAW;      // redraw if size changes
-	wc.lpfnWndProc = MainWndProc;     // points to window procedure
-	wc.cbClsExtra = 0;                // no extra class memory
-	wc.cbWndExtra = 0;                // no extra window memory
-	wc.hInstance = hInstance;         // handle to instance
-	wc.hIcon =
-	    LoadIcon(hInstance,
-		     "Accordion");        // Accordion icon
-	wc.hCursor =
-	    LoadCursor(NULL,
-		       IDC_ARROW);        // predefined arrow
-	wc.hbrBackground =
-	    GetSysColorBrush(COLOR_WINDOW);
-// 	    GetStockObject(WHITE_BRUSH);  // white background brush
-	wc.lpszMenuName =  "MainMenu";    // name of menu resource
-	wc.lpszClassName = "MainWClass";  // name of window class
+	WNDCLASS wc =
+	    {0, MainWndProc, 0, 0, hInstance,
+	     LoadIcon(hInstance, "Accordion"),
+	     LoadCursor(NULL, IDC_ARROW),
+	     GetSysColorBrush(COLOR_WINDOW),
+	     NULL, "MainWClass"};
 
 	// Register the window class.
 
@@ -332,19 +390,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
     // Create the main window.
 
     HWND hwnd =
-	CreateWindow("MainWClass",  // name of window class
-		     "Accordion",    // title-bar string
-		     WS_OVERLAPPED |
-		     WS_MINIMIZEBOX |
-		     WS_SYSMENU,    // top level window
-		     CW_USEDEFAULT, // default horizontal position
-		     CW_USEDEFAULT, // default vertical position
-		     CW_USEDEFAULT, // default width
-		     CW_USEDEFAULT, // default height
-		     NULL,          // no owner window
-		     NULL,          // use class menu
-		     hinst,         // handle to application instance
-		     NULL);         // no window-creation data
+	CreateWindow("MainWClass", "Accordion",
+		     WS_OVERLAPPED | WS_MINIMIZEBOX |
+		     WS_SYSMENU,
+		     CW_USEDEFAULT, CW_USEDEFAULT,
+		     CW_USEDEFAULT, CW_USEDEFAULT,
+		     NULL, NULL,
+		     hinst, NULL);
 
     // If the main window cannot be created, terminate
     // the application.
@@ -389,6 +441,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
     static HWND hrev;
     static HWND hkey;
     static HWND hvol;
+    static HWND hnot;
     static HWND quit;
     static HWND text;
     static HWND stat;
@@ -417,75 +470,51 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Set new dimensions
 
-	SetWindowPos(hWnd,          // Window
-		     NULL, 0, 0,    // No z, x, y
-		     width,         // width
-		     height,        // height
-		     SWP_NOMOVE |   // Don't move
-		     SWP_NOZORDER); // Don't change the Z order
+	SetWindowPos(hWnd, NULL, 0, 0, width, height,
+		     SWP_NOMOVE | SWP_NOZORDER);
 
 	// Create status bar
 
 	stat =
-	    CreateWindow(STATUSCLASSNAME, // Predefined class.
+	    CreateWindow(STATUSCLASSNAME,
 			 "\tPress the keyboard keys as"
 			 " accordion buttons and the space bar"
 			 " as the bellows. 3rd button"
 			 " start.",   // Text.
-			 WS_VISIBLE | WS_CHILD, // Styles.
-			 0, 0, 0, 0,  // no size or position.
-			 hWnd,        // Parent window.
-			 (HMENU)STAT, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 WS_VISIBLE | WS_CHILD,
+			 0, 0, 0, 0,
+			 hWnd, (HMENU)STAT,
+			 hinst, NULL);
 
 	// Create group box
 
 	hgrp =
-	    CreateWindow(WC_BUTTON,   // Predefined class.
-			 NULL,        // No text.
+	    CreateWindow(WC_BUTTON, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 BS_GROUPBOX, // Styles.
-			 10,          // x position.
-			 2,           // y position.
-			 540,         // width.
-			 86,          // height.
-			 hWnd,        // Parent window.
-			 NULL,        // No id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_GROUPBOX,
+			 10, 2, 540, 86,
+			 hWnd, NULL,
+			 hinst, NULL);
 
 	// Create text
 
 	text =
-	    CreateWindow(WC_STATIC,   // Predefined class.
-			 "Instrument:",// Text.
+	    CreateWindow(WC_STATIC, "Instrument:",
 			 WS_VISIBLE | WS_CHILD |
-			 SS_LEFT,     // Styles.
-			 20,          // x position.
-			 24,          // y position.
-			 76,          // width.
-			 20,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)TXTS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 SS_LEFT,
+			 20, 24, 76, 20,
+			 hWnd, (HMENU)TXTS,
+			 hinst, NULL);
 
 	// Create instruments pulldown
 
 	inst =
-	    CreateWindow(WC_COMBOBOX, // Predefined class.
-			 NULL,        // No text.
+	    CreateWindow(WC_COMBOBOX, NULL,
 			 WS_VISIBLE | WS_CHILD | WS_VSCROLL |
-			 CBS_DROPDOWNLIST, // Styles.
-			 102,         // x position.
-			 20,          // y position.
-			 168,         // width.
-			 24,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)INST, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 CBS_DROPDOWNLIST,
+			 102, 20, 168, 24,
+			 hWnd, (HMENU)INST,
+			 hinst, NULL);
 
 	// Add the instrument names
 
@@ -499,50 +528,32 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Create reverse tickbox
 
 	hrev =
-	    CreateWindow(WC_BUTTON,  // Predefined class.
-			 "Reverse buttons:", // Text.
+	    CreateWindow(WC_BUTTON, "Reverse:",
 			 WS_VISIBLE | WS_CHILD | BS_LEFTTEXT |
-			 BS_CHECKBOX, // Styles.
-			 279,         // x position.
-			 20,          // y position.
-			 130,         // width.
-			 24,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)REVS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_CHECKBOX,
+			 279, 20, 81, 24,
+			 hWnd, (HMENU)REVS,
+			 hinst, NULL);
 
 	// Create text
 
 	text =
-	    CreateWindow(WC_STATIC,   // Predefined class.
-			 "Key:",      // Text.
+	    CreateWindow(WC_STATIC, "Key:",
 			 WS_VISIBLE | WS_CHILD |
-			 SS_LEFT,     // Styles.
-			 418,         // x position.
-			 24,          // y position.
-			 76,          // width.
-			 20,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)TXTS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 SS_LEFT,
+			 411, 24, 76, 20,
+			 hWnd, (HMENU)TXTS,
+			 hinst, NULL);
 
 	// Create keys pulldown
 
 	hkey =
-	    CreateWindow(WC_COMBOBOX, // Predefined class.
-			 NULL,        // No text.
+	    CreateWindow(WC_COMBOBOX, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 CBS_DROPDOWNLIST, // Styles.
-			 456,         // x position.
-			 20,          // y position.
-			 83,          // width.
-			 24,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)KEYS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 CBS_DROPDOWNLIST,
+			 449, 20, 90, 24,
+			 hWnd, (HMENU)KEYS,
+			 hinst, NULL);
 
 	// Add the keys
 
@@ -556,86 +567,67 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Create text
 
 	text =
-	    CreateWindow(WC_STATIC,   // Predefined class.
-			 "Volume:",   // Text.
+	    CreateWindow(WC_STATIC, "Volume:",
 			 WS_VISIBLE | WS_CHILD |
-			 SS_LEFT,     // Styles.
-			 20,          // x position.
-			 58,          // y position.
-			 54,          // width.
-			 20,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)TXTS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 SS_LEFT,
+			 20, 58, 54, 20,
+			 hWnd, (HMENU)TXTS,
+			 hinst, NULL);
 
 	// Create volume control
 
 	hvol =
-	    CreateWindow(TRACKBAR_CLASS, // track bar control class
-			 NULL,        // no text
+	    CreateWindow(TRACKBAR_CLASS, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 TBS_HORZ,    // track bar styles
-			 102,         // horizontal position
-			 54,          // vertical position
-			 168,         // width of the track bar
-			 24,          // height of the track bar
-			 hWnd,        // handle to main window
-			 (HMENU)VOLM, // id
-			 hinst,       // instance owning this window
-			 NULL);       // pointer not needed
+			 TBS_HORZ,
+			 102, 54, 168, 24,
+			 hWnd, (HMENU)VOLM,
+			 hinst, NULL);
 
 	SendMessage(hvol, TBM_SETRANGE, TRUE, MAKELONG(0, MAXVOL));
 	SendMessage(hvol, TBM_SETPOS, TRUE, volume);
 
+	// Create notes tickbox
+
+	hnot =
+	    CreateWindow(WC_BUTTON, "Notes:",
+			 WS_VISIBLE | WS_CHILD |
+			 BS_LEFTTEXT | BS_CHECKBOX,
+			 279, 54, 81, 24,
+			 hWnd, (HMENU)NOTE,
+			 hinst, NULL);
+
 	// Create quit button
 
 	quit =
-	    CreateWindow(WC_BUTTON,  // Predefined class.
-			 "Quit",     // Text.
+	    CreateWindow(WC_BUTTON, "Quit",
 			 WS_VISIBLE | WS_CHILD |
-			 BS_PUSHBUTTON, // Styles.
-			 455,         // x position.
-			 53,          // y position.
-			 85,          // width.
-			 26,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)QUIT, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_PUSHBUTTON,
+			 448, 53, 92, 26,
+			 hWnd, (HMENU)QUIT,
+			 hinst, NULL);
 
 	// Create group box
 
 	hgrp =
-	    CreateWindow(WC_BUTTON,   // Predefined class.
-			 NULL,        // No text.
+	    CreateWindow(WC_BUTTON, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 BS_GROUPBOX, // Styles.
-			 10,          // x position.
-			 90,          // y position.
-			 540,         // width.
-			 77,          // height.
-			 hWnd,        // Parent window.
-			 NULL,        // No id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_GROUPBOX,
+			 10, 90, 540, 77,
+			 hWnd, NULL,
+			 hinst, NULL);
 
 	// Create text
 
 	text =
-	    CreateWindow(WC_STATIC,   // Predefined class.
-			 "Accordion\n\n" // Text.
+	    CreateWindow(WC_STATIC,
+			 "Accordion\n\n"
 			 "Play accordion on your keyboard",
 			 WS_VISIBLE | WS_CHILD |
-			 SS_CENTER,   // Styles.
-			 20,          // x position.
-			 107,         // y position.
-			 520,         // width.
-			 52,          // height.
-			 hWnd,        // Parent window.
-			 (HMENU)TXTS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 SS_CENTER,
+			 20, 107, 520, 52,
+			 hWnd, (HMENU)TXTS,
+			 hinst, NULL);
 
 	// Get status bar dimensions
 
@@ -652,18 +644,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Create group box
 
 	hgrp =
-	    CreateWindow(WC_BUTTON,   // Predefined class.
-			 NULL,        // No text.
+	    CreateWindow(WC_BUTTON, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 BS_GROUPBOX, // Styles.
-			 10,          // x position.
-			 bottom - 204, // y position.
-			 540,         // width.
-			 194,         // height.
-			 hWnd,        // Parent window.
-			 NULL,        // No id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_GROUPBOX,
+			 10, bottom - 204, 540, 194,
+			 hWnd, NULL,
+			 hinst, NULL);
 
 	// Create a row of bass buttons
 
@@ -673,18 +659,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	  int y = bottom - 186;
 
 	  bassdisplay[i] =
-	    CreateWindow(WC_BUTTON,  // Predefined class.
-			 NULL,       // No text.
+	    CreateWindow(WC_BUTTON, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 BS_PUSHBUTTON, // Styles.
-			 x,           // x position.
-			 y,           // y position.
-			 SIZE,        // width.
-			 SIZE,        // height.
-			 hWnd,        // Parent window.
-			 (HMENU)BTNS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_PUSHBUTTON,
+			 x, y, BUTTONSIZE, BUTTONSIZE,
+			 hWnd, (HMENU)BTNS,
+			 hinst, NULL);
 	}
 
 	// Create three rows of keyboard buttons
@@ -698,36 +678,24 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 		int y = bottom + 44 * i - 142;
 
 		display[i][j] =
-		    CreateWindow(WC_BUTTON,  // Predefined class.
-				 NULL,       // No text.
+		    CreateWindow(WC_BUTTON, NULL,
 				 WS_VISIBLE | WS_CHILD |
-				 BS_PUSHBUTTON, // Styles.
-				 x,           // x position.
-				 y,           // y position.
-				 SIZE,        // width.
-				 SIZE,        // height.
-				 hWnd,        // Parent window.
-				 (HMENU)BTNS, // Id.
-				 hinst,       // handle to application instance
-				 NULL);       // Pointer not needed.
+				 BS_PUSHBUTTON,
+				 x, y, BUTTONSIZE, BUTTONSIZE,
+				 hWnd, (HMENU)BTNS,
+				 hinst, NULL);
 	    }
 	}
 
 	// Create a spacebar button
 
 	spacebar =
-	    CreateWindow(WC_BUTTON,  // Predefined class.
-			 NULL,       // No text.
+	    CreateWindow(WC_BUTTON, NULL,
 			 WS_VISIBLE | WS_CHILD |
-			 BS_PUSHBUTTON, // Styles.
-			 21,          // x position.
-			 bottom - 54,  // y position.
-			 SIZE,        // width.
-			 SIZE,        // height.
-			 hWnd,        // Parent window.
-			 (HMENU)BTNS, // Id.
-			 hinst,       // handle to application instance
-			 NULL);       // Pointer not needed.
+			 BS_PUSHBUTTON,
+			 21, bottom - 54, BUTTONSIZE, BUTTONSIZE,
+			 hWnd, (HMENU)BTNS,
+			 hinst, NULL);
 
 	// Open a midi out device
 
@@ -896,6 +864,17 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	    SetFocus(hWnd);
 	    break;
 
+	    // Notes control
+
+	case NOTE:
+	    if (HIWORD(wParam) == BN_CLICKED)
+		DisplayNotes((HWND)lParam);
+
+	    // Set the focus back to the window
+
+	    SetFocus(hWnd);
+	    break;
+
 	    // Keyboard buttons, set the focus back to the window
 
 	case BTNS:
@@ -907,11 +886,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	case QUIT:
 	    if (HIWORD(wParam) == BN_CLICKED)
 	    {
-		if (MessageBox(hWnd,
-			       "Really?",
-			       "Quit",
-			       MB_OKCANCEL |
-			       MB_ICONQUESTION |
+		if (MessageBox(hWnd, "Really?", "Quit",
+			       MB_OKCANCEL | MB_ICONQUESTION |
 			       MB_DEFBUTTON1) == IDOK)
 		{
 		    midiOutReset(hmdo);
@@ -966,30 +942,7 @@ UINT ReverseButtons(HWND hrev)
 
     // Change display
 
-    for (int i = 0; i < LENGTH(notetops[0]); i++)
-    {
-	for (int j = 0; j < LENGTH(notetops[0][0]); j++)
-	{
-	    int k;
-
-	    switch (i)
-	    {
-	    case 0:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
-		break;
-
-	    case 1:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 1: j;
-		break;
-
-	    case 2:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
-		break;
-	    }
-
-	    SetWindowText(display[i][j], notetops[key][i][k]);
-	}
-    }
+    ChangeDisplay();
 }
 
 // Change key
@@ -1000,7 +953,30 @@ UINT ChangeKey(HWND hkey)
 
     key = SendMessage(hkey, CB_GETCURSEL, 0, 0);
 
+    // Set type
+
+    type = types[key];
+
     // Change display
+
+    ChangeDisplay();
+}
+
+UINT DisplayNotes(HWND hnot)
+{
+    shownotes = !shownotes;
+    SendMessage(hnot, BM_SETCHECK,
+		shownotes? BST_CHECKED: BST_UNCHECKED, 0);
+
+    // Change display
+
+    ChangeDisplay();
+}
+
+// Change display
+
+UINT ChangeDisplay()
+{
 
     for (int i = 0; i < LENGTH(notetops[0]); i++)
     {
@@ -1023,7 +999,18 @@ UINT ChangeKey(HWND hkey)
 		break;
 	    }
 
-	    SetWindowText(display[i][j], notetops[key][i][k]);
+	    if (shownotes)
+		SetWindowText(display[i][j], notetops[key][i][k]);
+
+	    else
+		SetWindowText(display[i][j], NULL);
+
+	    if ((type == CHROMATIC) && (notetops[key][i][k] != NULL) &&
+		(strlen(notetops[key][i][k]) > 1))
+		SendMessage(display[i][j], BM_SETSTYLE, BS_DEFPUSHBUTTON, TRUE);
+
+	    else
+		SendMessage(display[i][j], BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
 	}
     }
 }
@@ -1128,7 +1115,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 			    break;
 			}
 
-			int note = notes[k][bellows] + keyvals[key][i];
+			int note = notes[type][k][bellows] + keyvals[key][i];
 			ShortMessage(NOTEON + i, note, volume);
 		    }
 		}
@@ -1186,7 +1173,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 			break;
 		    }
 
-		    int note = notes[k][bellows] + keyvals[key][i];
+		    int note = notes[type][k][bellows] + keyvals[key][i];
 		    ShortMessage(NOTEON + i, note, volume);
 		    return FALSE;
 		}
@@ -1267,7 +1254,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
 			    break;
 			}
 
-			int note = notes[k][bellows] + keyvals[key][i];
+			int note = notes[type][k][bellows] + keyvals[key][i];
 			ShortMessage(NOTEON + i, note, volume);
 		    }
 		}
@@ -1322,7 +1309,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
 			break;
 		    }
 
-		    int note = notes[k][bellows] + keyvals[key][i];
+		    int note = notes[type][k][bellows] + keyvals[key][i];
 		    ShortMessage(NOTEOFF + i, note, volume);
 		    return FALSE;
 		}
