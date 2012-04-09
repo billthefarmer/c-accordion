@@ -28,21 +28,26 @@
 
 // Macros
 
-#define LENGTH(a) (sizeof(a) / sizeof(a[0]))
+#define Length(a) (sizeof(a) / sizeof(a[0]))
 
 // Max volume
 
-#define MAXVOL 127
+enum
+    {MAXVOL = 127};
 
 // Buttons
 
-#define ROWS         3
-#define BUTTONS     11
-#define BASSBUTTONS 12
+enum
+    {ROWS        =  3,
+     TYPES       =  2,
+     BUTTONS     = 11,
+     DIRECTIONS  =  2,
+     BASSBUTTONS = 12};
 
 // Button size
 
-#define SIZE 34
+enum
+    {SIZE = 34};
 
 // Command IDs
 
@@ -50,7 +55,8 @@ enum {
     kCommandInst    = 'inst',
     kCommandReverse = 'rvrs',
     kCommandKey     = 'key ',
-    kCommandVolume  = 'vol '};
+    kCommandVolume  = 'vol ',
+    kCommandNote    = 'note'};
 
 // HIView IDs
 
@@ -59,6 +65,9 @@ HIViewID kHIViewIDReverse =
 
 HIViewID kHIViewIDKey =
     {kCommandKey, 102};
+
+HIViewID kHIViewIDNote =
+    {kCommandNote, 103};
 
 // Key IDs
 
@@ -188,26 +197,43 @@ char *instruments[] =
 
 int instrument;
 
+// Types
+
+enum
+    {DIATONIC,
+     CHROMATIC};
+
 // List of keys and offset values
 
 char *keys[] =
-    {"F/Eb/Bb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#"};
+    {"F/Eb/Bb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#",
+     " C System", " B System"};
 
-int keyvals[LENGTH(keys)][ROWS] =
+int keyvals[Length(keys)][ROWS] =
     {{ 3, -2, -7},  // F/Bb/Eb
      { 5,  0, -5},  // G/C/F
      { 7,  2, -3},  // A/D/G
      { 7,  2,  1},  // C#/D/G
-     { 1,  0, -1}}; // B/C/C#
+     { 1,  0, -1},  // B/C/C#
+     { 1,  0, -1},  // C System
+     { 2,  0, -2}}; // B System
 
 //      Eb  Bb   F   C   G   D   A
 //     { 3, -2,  5,  0, -5,  2, -3};
 
 int key;
 
+// Types
+
+int types[Length(keys)] =
+    {DIATONIC, DIATONIC, DIATONIC, DIATONIC,
+     DIATONIC, CHROMATIC, CHROMATIC};
+
+int type;
+
 // Keyboard
 
-int keyboard[3][11] =
+int keyboard[ROWS][BUTTONS] =
     {{kKeyboardWKey,
       kKeyboardEKey,
       kKeyboardRKey,
@@ -258,29 +284,119 @@ int basskeys[] =
      kKeyboardF11Key,
      kKeyboardF12Key};
 
-char *keytops[3] =
-    {"WERTYUIOP-",
-     "ASDFGHJKL--",
-     "ZXCVBNM---"};
+// Keyboard notes
 
-// Midi notes for 'C'
+char *notetops[Length(keys)][ROWS][BUTTONS] =
+    {
+	// F/Bb/Eb
 
-int notes[BUTTONS][2] =
-    {{52, 57},
-     {55, 59},
-     {60, 62},
-     {64, 65},
-     {67, 69},
-     {72, 71},
-     {76, 74},
-     {79, 77},
-     {84, 81},
-     {88, 83},
-     {91, 86}}; 
+	{{"G", "Bb", "Eb", "G", "Bb", "Eb", "G", "Bb", "Eb", "G"},
+	 {"D", "F", "Bb", "D", "F", "Bb", "D", "F", "Bb", "D", "F"},
+	 {"C", "F", "A", "C", "F", "A", "C", "F", "A", "C"}},
+
+	// G/C/F
+
+	{{"A", "C", "F", "A", "C", "F", "A", "C", "F", "A"},
+	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+	 {"D", "G", "B", "D", "G", "B", "D", "G", "B", "D"}},
+
+	// A/D/G
+
+	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+	 {"E", "A", "C#", "E", "A", "C#", "E", "A", "C#", "E"}},
+
+	// C#/D/G
+
+	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+	 {"G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F", "G#"}},
+
+	// B/C/C#
+
+	{{"F", "G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F"},
+	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}},
+
+	// C System
+
+	{{"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"},
+	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+	 {"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"}},
+
+	// B System
+
+	{{"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"},
+	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+	 {"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"}}
+    };
+
+// Hilites
+
+Boolean hilites[Length(keys)][ROWS][BUTTONS] =
+    {
+	// F/Bb/Eb
+
+	{},
+
+	// G/C/F
+
+	{},
+
+	// A/D/G
+
+	{},
+
+	// C#/D/G
+
+	{},
+
+	// B/C/C#
+
+	{},
+
+	// C System
+
+	{{true, false, false, false, true, false, false, false, true, false},
+	 {false, true, true, false, false, true, true, false, false, true, true},
+	 {false, false, true, true, false, false, true, true, false, false}},
+
+	// b system
+
+	{{false, false, true, true, false, false, true, true, false, false},
+	 {false, true, true, false, false, true, true, false, false, true, true},
+	 {true, false, false, false, true, false, false, false, true, false}}
+    };
+
+// Midi notes for C Diatonic, G Chromatic
+
+int notes[TYPES][BUTTONS][DIRECTIONS] =
+    {{{52, 57}, // C Diatonic
+      {55, 59},
+      {60, 62},
+      {64, 65},
+      {67, 69},
+      {72, 71},
+      {76, 74},
+      {79, 77},
+      {84, 81},
+      {88, 83},
+      {91, 86}},
+     {{55, 55}, // G Chromatic
+      {58, 58},
+      {61, 61},
+      {64, 64},
+      {67, 67},
+      {70, 70},
+      {73, 73},
+      {76, 76},
+      {79, 79},
+      {82, 82},
+      {85, 85}}};
 
 // Chords
 
-int chords[LENGTH(keys)][BASSBUTTONS][2][2] =
+int chords[Length(keys)][BASSBUTTONS][DIRECTIONS][2] =
     {
 	// F/Bb/Eb
 
@@ -326,6 +442,24 @@ int chords[LENGTH(keys)][BASSBUTTONS][2][2] =
 	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
 	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
 	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+
+	// C System
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
+
+	// B System
+
+	{{{42, 54}, {42, 54}}, {{47, 59}, {47, 59}},  // F#/B
+	 {{40, 52}, {40, 52}}, {{45, 57}, {45, 57}},  //  E/A
+	 {{38, 50}, {38, 50}}, {{43, 55}, {43, 55}},  //  D/G
+	 {{36, 48}, {36, 48}}, {{41, 53}, {41, 53}},  //  C/F
+	 {{46, 58}, {46, 58}}, {{39, 51}, {39, 51}},  // Bb/Eb
+	 {{44, 56}, {44, 56}}, {{37, 49}, {37, 49}}}, // Ab/Db
     };
 
 // Synthesizer unit
@@ -349,6 +483,10 @@ Boolean bellows;
 
 Boolean reverse = false;
 
+// Notes value
+
+Boolean shownotes;
+
 // Volume value
 
 int volume = MAXVOL;
@@ -361,7 +499,8 @@ OSStatus ComboBoxHandler(EventHandlerCallRef, EventRef, void*);
 OSStatus CommandHandler(EventHandlerCallRef, EventRef, void*);
 OSStatus WindowHandler(EventHandlerCallRef, EventRef, void*);
 OSStatus MouseHandler(EventHandlerCallRef, EventRef, void*);
-
+OSStatus DisplayAlert(CFStringRef, CFStringRef, OSStatus);
+void ChangeDisplay(void);
 void ChangeInstrument(int);
 
 // Function main
@@ -379,7 +518,6 @@ int main(int argc, char *argv[])
 
     MenuRef menu;
     HIRect rect;
-    int i;
 
     // Window bounds
 
@@ -483,7 +621,7 @@ int main(int argc, char *argv[])
 
     // Add the instruments
 
-    for (i = 0; i < LENGTH(instruments); i++)
+    for (int i = 0; i < Length(instruments); i++)
     {
         HIComboBoxAppendTextItem(combo,
             CFStringCreateWithCString(kCFAllocatorDefault,
@@ -508,7 +646,7 @@ int main(int argc, char *argv[])
 
     // Create check box
 
-    CreateCheckBoxControl(window, &bounds, CFSTR("Reverse Buttons"),
+    CreateCheckBoxControl(window, &bounds, CFSTR("Reverse"),
                           false, true, &check);
 
     // Set the control ID and the command ID
@@ -553,7 +691,7 @@ int main(int argc, char *argv[])
 
     // Add keys
 
-    for (i = 0; i < LENGTH(keys); i++)
+    for (int i = 0; i < Length(keys); i++)
     {
         HIComboBoxAppendTextItem(combo,
             CFStringCreateWithCString(kCFAllocatorDefault,
@@ -603,6 +741,26 @@ int main(int argc, char *argv[])
 
     HIViewAddSubview(group, slider);
     HIViewPlaceInSuperviewAt(slider, 100, 58);
+
+    // Bounds of check box
+
+    bounds.bottom = 18;
+    bounds.right = 121;
+
+    // Create check box
+
+    CreateCheckBoxControl(window, &bounds, CFSTR("Notes"),
+                          false, true, &check);
+
+    // Set the control ID and the command ID
+
+    HIViewSetID(check, kHIViewIDNote);
+    HIViewSetCommandID(check, kCommandNote); 
+
+    // Place in the group box
+
+    HIViewAddSubview(group, check);
+    HIViewPlaceInSuperviewAt(check, 286, 56);
 
     // Bounds of push button
 
@@ -688,17 +846,14 @@ int main(int argc, char *argv[])
     HIViewAddSubview(content, group);
     HIViewPlaceInSuperviewAt(group, 20, 200);
 
-    int j;
-    static char s[] = " ";
-
-    // button bounds
+    // Button bounds
 
     bounds.bottom = SIZE;
     bounds.right  = SIZE;
 
     // Create row of bass buttons
 
-    for (i = 0; i < LENGTH(bassdisplay); i++)
+    for (int i = 0; i < Length(bassdisplay); i++)
     {
 	int x = 15 + 44 * i;
 	int y = 15;
@@ -718,20 +873,17 @@ int main(int argc, char *argv[])
 
     // Create three rows of buttons
 
-    for (i = 0; i < LENGTH(display); i++)
+    for (int i = 0; i < Length(display); i++)
     {
-	for (j = 0; j < ((i == 1)? LENGTH(display[i]):
-			 LENGTH(display[i]) - 1); j++)
+	for (int j = 0; j < ((i == 1)? Length(display[i]):
+			 Length(display[i]) - 1); j++)
 	{
 	    int x = (i == 1)? 37 + 44 * j: 59 + 44 * j;
 	    int y = 59 + 44 * i;
-	    s[0] = keytops[i][j];
 
 	    // Create button
 
-	    CreateBevelButtonControl(window, &bounds,
-                CFStringCreateWithCString(kCFAllocatorDefault,
-                                          s, kCFStringEncodingMacRoman),
+	    CreateBevelButtonControl(window, &bounds, NULL,
 				     kControlBevelButtonNormalBevel,
 				     kControlBehaviorPushbutton,
 				     NULL, 0, 0, 0, &display[i][j]);
@@ -745,8 +897,7 @@ int main(int argc, char *argv[])
 
     // Create spacebar button
 
-    CreateBevelButtonControl(window, &bounds,
-			     NULL,
+    CreateBevelButtonControl(window, &bounds, NULL,
 			     kControlBevelButtonNormalBevel,
 			     kControlBehaviorPushbutton,
 			     NULL, 0, 0, 0, &spacebar);
@@ -801,7 +952,7 @@ int main(int argc, char *argv[])
     // Install event handler
 
     InstallApplicationEventHandler(NewEventHandlerUPP(ApplicationHandler),
-                                   LENGTH(applicationEvents), applicationEvents,
+                                   Length(applicationEvents), applicationEvents,
                                    NULL, NULL);
 
     // Mouse events type spec
@@ -814,7 +965,7 @@ int main(int argc, char *argv[])
 
     InstallEventHandler(GetEventDispatcherTarget(),
                         NewEventHandlerUPP(MouseHandler),
-                        LENGTH(mouseEvents), mouseEvents,
+                        Length(mouseEvents), mouseEvents,
                         NULL, NULL);
 
     // Window events type spec
@@ -825,7 +976,7 @@ int main(int argc, char *argv[])
     // Install event handler
 
     InstallWindowEventHandler(window, NewEventHandlerUPP(WindowHandler),
-                              LENGTH(windowEvents), windowEvents,
+                              Length(windowEvents), windowEvents,
                               NULL, NULL);
 
     // Combo box events type spec
@@ -836,7 +987,7 @@ int main(int argc, char *argv[])
     // Install event handler
 
     InstallApplicationEventHandler(NewEventHandlerUPP(ComboBoxHandler),
-                                   LENGTH(comboBoxEvents), comboBoxEvents,
+                                   Length(comboBoxEvents), comboBoxEvents,
                                    NULL, NULL);
 
     // Command events type spec
@@ -847,7 +998,7 @@ int main(int argc, char *argv[])
     // Install event handler
 
     InstallApplicationEventHandler(NewEventHandlerUPP(CommandHandler),
-                                   LENGTH(commandEvents), commandEvents,
+                                   Length(commandEvents), commandEvents,
                                    NULL, NULL);
 
     // Keyboard events type spec
@@ -861,7 +1012,7 @@ int main(int argc, char *argv[])
 
     InstallEventHandler(GetEventDispatcherTarget(),
 			NewEventHandlerUPP(KeyboardHandler),
-			LENGTH(keyboardEvents), keyboardEvents,
+			Length(keyboardEvents), keyboardEvents,
 			NULL, NULL);
 
     // Audio Unit graph
@@ -880,51 +1031,120 @@ int main(int argc, char *argv[])
     cd.componentFlags = 0;
     cd.componentFlagsMask = 0;
 
-    // New AU graph
+    do
+    {
+	// New AU graph
 
-    NewAUGraph(&graph);
+	OSStatus status = NewAUGraph(&graph);
 
-    // Synthesizer
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("NewAUGraph"), 
+			 CFSTR("Can't create a new AUGraph"),
+			 status);
+	    break;
+	}
 
-    cd.componentType = kAudioUnitType_MusicDevice;
-    cd.componentSubType = kAudioUnitSubType_DLSSynth;
+	// Synthesizer
 
-    // New synthesizer node
+	cd.componentType = kAudioUnitType_MusicDevice;
+	cd.componentSubType = kAudioUnitSubType_DLSSynth;
 
-    AUGraphNewNode(graph, &cd, 0, NULL, &synthNode);
+	// New synthesizer node
 
-    // Output
+	status = AUGraphNewNode(graph, &cd, 0, NULL, &synthNode);
 
-    cd.componentType = kAudioUnitType_Output;
-    cd.componentSubType = kAudioUnitSubType_DefaultOutput;
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphNewNode"), 
+			 CFSTR("Can't create a new  AUGraph node"),
+			 status);
+	    break;
+	}
+
+	// Output
+
+	cd.componentType = kAudioUnitType_Output;
+	cd.componentSubType = kAudioUnitSubType_DefaultOutput;
  
-    // New output node
+	// New output node
 
-    AUGraphNewNode(graph, &cd, 0, NULL, &outNode);
+	status = AUGraphNewNode(graph, &cd, 0, NULL, &outNode);
 
-    // Open graph
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphNewNode"), 
+			 CFSTR("Can't create a new  AUGraph node"),
+			 status);
+	    break;
+	}
 
-    AUGraphOpen(graph);
+	// Open graph
 
-    // Connect synthesizer node to output node
+	status = AUGraphOpen(graph);
 
-    AUGraphConnectNodeInput(graph, synthNode, 0, outNode, 0);
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphOpen"), 
+			 CFSTR("Can't open AUGraph"),
+			 status);
+	    break;
+	}
 
-    // Get a synthesizer unit
+	// Connect synthesizer node to output node
 
-    AUGraphGetNodeInfo(graph, synthNode, NULL, 0, NULL, &synthUnit);
+	status = AUGraphConnectNodeInput(graph, synthNode, 0, outNode, 0);
 
-    // Initialise
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphConnectNodeInput"), 
+			 CFSTR("Can't connect AUGraph input node"),
+			 status);
+	    break;
+	}
 
-    AUGraphInitialize(graph);
+	// Get a synthesizer unit
 
-    // Start
+	status =
+	    AUGraphGetNodeInfo(graph, synthNode, NULL, 0, NULL, &synthUnit);
 
-    AUGraphStart(graph);
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphGetNodeInfo"), 
+			 CFSTR("Can't get AUGraph node info"),
+			 status);
+	    break;
+	}
 
-    // Show the graph
+	// Initialise
 
-//     CAShow(graph);
+	status = AUGraphInitialize(graph);
+
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphInitialize"), 
+			 CFSTR("Can't initialize AUGraph"),
+			 status);
+	    break;
+	}
+
+	// Start
+
+	status = AUGraphStart(graph);
+
+	if (status != noErr)
+	{
+	    DisplayAlert(CFSTR("AUGraphStart"), 
+			 CFSTR("Can't start AUGraph"),
+			 status);
+	    break;
+	}
+
+	// Show the graph
+
+	//     CAShow(graph);
+
+    } while (false);
 
     // Change instrument
 
@@ -945,6 +1165,55 @@ int main(int argc, char *argv[])
     // Exit
 
     return 0;
+}
+
+// Display alert
+
+OSStatus DisplayAlert(CFStringRef error, CFStringRef explanation,
+		      OSStatus status)
+{
+    DialogRef dialog;
+
+    if (status == 0)
+	CreateStandardAlert(kAlertStopAlert, error, explanation, NULL, &dialog);
+
+    else
+    {
+	CFStringRef exp;
+
+	if (status > 0)
+	{
+	    char s[8];
+
+	    CFStringRef stat = UTCreateStringForOSType(status);
+	    CFStringGetCString(stat, s, sizeof(s), kCFStringEncodingMacRoman);
+	    CFRelease(stat);
+    
+	    exp =
+		CFStringCreateWithFormat(kCFAllocatorDefault, NULL,
+					 CFSTR("%s: '%s' (0x%x)"),
+					 CFStringGetCStringPtr(explanation,
+					     kCFStringEncodingMacRoman),
+					 s, status);
+	}
+
+	else
+	{
+	    exp =
+		CFStringCreateWithFormat(kCFAllocatorDefault, NULL,
+					 CFSTR("%s: %d (0x%x)"),
+					 CFStringGetCStringPtr(explanation,
+					     kCFStringEncodingMacRoman),
+					 status, status);
+	}
+
+	CreateStandardAlert(kAlertStopAlert, error, exp, NULL, &dialog);
+    }
+
+    SetWindowTitleWithCFString(GetDialogWindow(dialog), CFSTR("Accordion"));
+    RunStandardAlert(dialog, NULL, NULL);
+
+    return noErr;
 }
 
 // Application Handler
@@ -987,12 +1256,10 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 
         if (!same)
         {
-	    int i, j;
-
             // Turn all the notes off and reset all the buttons that
             // are down
 
-	    for (i = 0; i < LENGTH(bass); i++)
+	    for (int i = 0; i < Length(bass); i++)
 	    {
 		// Bass buttons
 
@@ -1001,7 +1268,7 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 		    bass[i] = false;
 		    HIViewSetValue(bassdisplay[i], false);
 
-		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		    int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		    int note = chords[key][k][bellows][0];
 		    MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + ROWS,
@@ -1013,9 +1280,9 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 		}
 	    }
 
-            for (i = 0; i < LENGTH(buttons); i++)
+            for (int i = 0; i < Length(buttons); i++)
             {
-                for (j = 0; j < LENGTH(buttons[i]); j++)
+                for (int j = 0; j < Length(buttons[i]); j++)
                 {
                     // Melody buttons
 
@@ -1029,19 +1296,19 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 			switch (i)
 			{
 			case 0:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    k = (reverse)? Length(buttons[i]) - j - 2: j;
 			    break;
 
 			case 1:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j;
 			    break;
 
 			case 2:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
 
-                        int note = notes[k][bellows] + keyvals[key][i];
+                        int note = notes[type][k][bellows] + keyvals[key][i];
                         MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + i,
                                              note, 0, 0);
                     }
@@ -1225,6 +1492,7 @@ OSStatus CommandHandler(EventHandlerCallRef next,
 
     case kCommandReverse:
         reverse = value;
+	ChangeDisplay();
         break;
 
         // Volume
@@ -1232,6 +1500,13 @@ OSStatus CommandHandler(EventHandlerCallRef next,
     case kCommandVolume:
         volume = value;
         break;
+
+	// Notes
+
+    case kCommandNote:
+	shownotes = value;
+	ChangeDisplay();
+	break;
 
         // Quit
 
@@ -1246,6 +1521,57 @@ OSStatus CommandHandler(EventHandlerCallRef next,
     // Report success
 
     return noErr;
+}
+
+// Change display
+
+void ChangeDisplay()
+{
+    for (int i = 0; i < Length(notetops[0]); i++)
+    {
+	for (int j = 0; j < Length(notetops[0][0]); j++)
+	{
+	    int k;
+
+	    switch (i)
+	    {
+	    case 0:
+		k = (reverse)? Length(notetops[0][i]) - j - 2: j;
+		break;
+
+	    case 1:
+		k = (reverse)? Length(notetops[0][i]) - j - 1: j;
+		break;
+
+	    case 2:
+		k = (reverse)? Length(notetops[0][i]) - j - 2: j;
+		break;
+	    }
+
+	    if (display[i][j] != NULL)
+	    {
+		if (shownotes)
+		{
+		    CFStringRef s =
+			CFStringCreateWithCString(kCFAllocatorDefault,
+						  notetops[key][i][k],
+						  kCFStringEncodingMacRoman);
+
+		    HIViewSetText(display[i][j], s);
+		    CFRelease(s);
+		}
+
+		else
+		    HIViewSetText(display[i][j], CFSTR(""));
+
+		if ((type == CHROMATIC) && (hilites[key][i][k] == true))
+		    HIViewSetValue(display[i][j], true);
+
+		else
+		    HIViewSetValue(display[i][j], false);
+	    }
+	}
+    }
 }
 
 // Combo box handler
@@ -1293,6 +1619,8 @@ OSStatus ComboBoxHandler(EventHandlerCallRef next,
 
     case kCommandKey:
         key = index;
+	type = types[key];
+	ChangeDisplay();
         break;
 
         // Something else
@@ -1318,7 +1646,6 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 {
     UInt32 kind;
     UInt32 keyCode;
-    int i, j;
 
     // Get the event kind
 
@@ -1359,9 +1686,9 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
                 // Check the keys
 
-		for (i = 0; i < LENGTH(buttons); i++)
+		for (int i = 0; i < Length(buttons); i++)
 		{
-                    for (j = 0; j < LENGTH(buttons[i]); j++)
+                    for (int j = 0; j < Length(buttons[i]); j++)
                     {
                         // If a key is down
 
@@ -1374,26 +1701,26 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                             switch (i)
                             {
                             case 0:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+                                k = (reverse)? Length(buttons[i]) - j - 2: j;
                                 break;
 
                             case 1:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+                                k = (reverse)? Length(buttons[i]) - j - 1: j;
                                 break;
 
                             case 2:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+                                k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
                                 break;
                             }
 
-                            int note = notes[k][!bellows] + keyvals[key][i];
+                            int note = notes[type][k][!bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOff + i,
                                                  note, 0, 0);
 
                             // Play the new note
 
-                            note = notes[k][bellows] + keyvals[key][i];
+                            note = notes[type][k][bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOn + i,
                                                  note, volume, 0);
@@ -1401,13 +1728,13 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		    }
 		}
 
-                for (i = 0; i < LENGTH(bass); i++)
+                for (int i = 0; i < Length(bass); i++)
                 {
                     if (bass[i])
                     {
                         // Play chord
 
-                        int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+                        int k = (reverse)? Length(basskeys) - i - 1: i;
 
                         int note =  chords[key][k][!bellows][0];
                         MusicDeviceMIDIEvent(synthUnit,
@@ -1439,9 +1766,9 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
 	    // Look up the key code in the keyboard table
 
-	    for (i = 0; i < LENGTH(keyboard); i++)
+	    for (int i = 0; i < Length(keyboard); i++)
 	    {
-		for (j = 0; j < LENGTH(keyboard[i]); j++)
+		for (int j = 0; j < Length(keyboard[i]); j++)
 		{
 		    if (keyboard[i][j] == keyCode && !buttons[i][j])
 		    {
@@ -1455,19 +1782,19 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 			switch (i)
 			{
 			case 0:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    k = (reverse)? Length(buttons[i]) - j - 2: j;
 			    break;
 
 			case 1:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j;
 			    break;
 
 			case 2:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
 
-			int note = notes[k][bellows] + keyvals[key][i];
+			int note = notes[type][k][bellows] + keyvals[key][i];
 			MusicDeviceMIDIEvent(synthUnit,
 					     kMidiMessageNoteOn + i,
 					     note, volume, 0);
@@ -1476,14 +1803,14 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		}
 	    }
 
-	    for (i = 0; i < LENGTH(basskeys); i++)
+	    for (int i = 0; i < Length(basskeys); i++)
 	    {
 		if (basskeys[i] == keyCode && !bass[i])
 		{
 		    bass[i] = true;
 		    HIViewSetValue(bassdisplay[i], true);
 
-		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		    int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		    int note =  chords[key][k][bellows][0];
 		    MusicDeviceMIDIEvent(synthUnit,
@@ -1523,9 +1850,9 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
                 // Check the keys
 
-		for (i = 0; i < LENGTH(buttons); i++)
+		for (int i = 0; i < Length(buttons); i++)
 		{
-                    for (j = 0; j < LENGTH(buttons[i]); j++)
+                    for (int j = 0; j < Length(buttons[i]); j++)
                     {
                         // If a key is down
 
@@ -1538,26 +1865,26 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
                             switch (i)
                             {
                             case 0:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+                                k = (reverse)? Length(buttons[i]) - j - 2: j;
                                 break;
 
                             case 1:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+                                k = (reverse)? Length(buttons[i]) - j - 1: j;
                                 break;
 
                             case 2:
-                                k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+                                k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
                                 break;
                             }
 
-                            int note = notes[k][!bellows] + keyvals[key][i];
+                            int note = notes[type][k][!bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOff + i,
                                                  note, 0, 0);
 
                             // Play the new note
 
-                            note = notes[k][bellows] + keyvals[key][i];
+                            note = notes[type][k][bellows] + keyvals[key][i];
                             MusicDeviceMIDIEvent(synthUnit,
 						 kMidiMessageNoteOn + i,
                                                  note, volume, 0);
@@ -1565,13 +1892,13 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		    }
 		}
 
-                for (i = 0; i < LENGTH(bass); i++)
+                for (int i = 0; i < Length(bass); i++)
                 {
                     if (bass[i])
                     {
                         // Play chord
 
-                        int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+                        int k = (reverse)? Length(basskeys) - i - 1: i;
 
                         int note =  chords[key][k][!bellows][0];
                         MusicDeviceMIDIEvent(synthUnit,
@@ -1603,9 +1930,9 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
 	    // Look up the key code in the keyboard table
 
-	    for (i = 0; i < LENGTH(keyboard); i++)
+	    for (int i = 0; i < Length(keyboard); i++)
 	    {
-		for (j = 0; j < LENGTH(keyboard[i]); j++)
+		for (int j = 0; j < Length(keyboard[i]); j++)
 		{
 		    if (keyboard[i][j] == keyCode && buttons[i][j])
 		    {
@@ -1619,19 +1946,19 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 			switch (i)
 			{
 			case 0:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    k = (reverse)? Length(buttons[i]) - j - 2: j;
 			    break;
 
 			case 1:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j;
 			    break;
 
 			case 2:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
 
-			int note = notes[k][bellows] + keyvals[key][i];
+			int note = notes[type][k][bellows] + keyvals[key][i];
 			MusicDeviceMIDIEvent(synthUnit,
 					     kMidiMessageNoteOff + i,
 					     note, 0, 0);
@@ -1640,14 +1967,14 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		}
 	    }
 
-	    for (i = 0; i < LENGTH(basskeys); i++)
+	    for (int i = 0; i < Length(basskeys); i++)
 	    {
 		if (basskeys[i] == keyCode && bass[i])
 		{
 		    bass[i] = false;
 		    HIViewSetValue(bassdisplay[i], false);
 
-		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		    int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		    int note = chords[key][k][bellows][0];
 		    MusicDeviceMIDIEvent(synthUnit,

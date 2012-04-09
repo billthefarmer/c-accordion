@@ -1,3 +1,7 @@
+Add C System and B System chromatic 08-Apr-12
+
+Update code 15-May-10
+
 Add copyright file and changelog, remove layout code. 04-Dec-09
 
 Add source files. 24-Nov-09
