@@ -6,23 +6,23 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Copyright 2012 Bill Farmer</string>
 	<key>CFBundleIconFile</key>
-	<string>Corona III (2009).jpg</string>
+	<string>Accordion</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.Accordion</string>
+	<string>com.billthefarmer.Accordion</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.01</string>
+	<key>CFBundleSignature</key>
+	<string>ACDN</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>CSResourcesFileMapped</key>
-	<true/>
+	<string>Version 1.01</string>
 </dict>
 </plist>

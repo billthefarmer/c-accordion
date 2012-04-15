@@ -1,3 +1,5 @@
+Change highlighting and add extra bass buttons 14-Apr-12
+
 Add C System and B System chromatic 08-Apr-12
 
 Update code 15-May-10

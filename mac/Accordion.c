@@ -72,6 +72,20 @@ HIViewID kHIViewIDNote =
 // Key IDs
 
 enum {
+    kKeyboard1Key = 0x12,
+    kKeyboard2Key = 0x13,
+    kKeyboard3Key = 0x14,
+    kKeyboard4Key = 0x15,
+    kKeyboard5Key = 0x17,
+    kKeyboard6Key = 0x16,
+    kKeyboard7Key = 0x1a,
+    kKeyboard8Key = 0x1c,
+    kKeyboard9Key = 0x19,
+    kKeyboard0Key = 0x1d,
+
+    kKeyboardMinusKey  = 0x1b,
+    kKeyboardEqualsKey = 0x18,
+
     kKeyboardAKey = 0x00,
     kKeyboardBKey = 0x0b,
     kKeyboardCKey = 0x08,
@@ -153,47 +167,47 @@ enum {
 // List of midi instruments
 
 char *instruments[] =
-    {"Acoustic Grand Piano", "Bright Acoustic Piano",
-     "Electric Grand Piano", "Honky-tonk Piano",
-     "Electric Piano 1", "Electric Piano 2", "Harpsichord",
-     "Clavi", "Celesta", "Glockenspiel", "Music Box",
-     "Vibraphone", "Marimba", "Xylophone", "Tubular Bells",
-     "Dulcimer", "Drawbar Organ", "Percussive Organ",
-     "Rock Organ", "Church Organ", "Reed Organ",
-     "Accordion", "Harmonica", "Tango Accordion",
-     "Acoustic Guitar (nylon)", "Acoustic Guitar (steel)",
-     "Electric Guitar (jazz)", "Electric Guitar (clean)",
-     "Electric Guitar (muted)", "Overdriven Guitar",
-     "Distortion Guitar", "Guitar harmonics",
-     "Acoustic Bass", "Electric Bass (finger)",
-     "Electric Bass (pick)", "Fretless Bass",
-     "Slap Bass 1", "Slap Bass 2", "Synth Bass 1",
-     "Synth Bass 2", "Violin", "Viola", "Cello",
-     "Contrabass", "Tremolo Strings", "Pizzicato Strings",
-     "Orchestral Harp", "Timpani", "String Ensemble 1",
-     "String Ensemble 2", "SynthStrings 1", "SynthStrings 2",
-     "Choir Aahs", "Voice Oohs", "Synth Voice",
-     "Orchestra Hit", "Trumpet", "Trombone", "Tuba",
-     "Muted Trumpet", "French Horn", "Brass Section",
-     "SynthBrass 1", "SynthBrass 2", "Soprano Sax",
-     "Alto Sax", "Tenor Sax", "Baritone Sax", "Oboe",
-     "English Horn", "Bassoon", "Clarinet", "Piccolo",
-     "Flute", "Recorder", "Pan Flute", "Blown Bottle",
-     "Shakuhachi", "Whistle", "Ocarina", "Lead 1 (square)",
-     "Lead 2 (sawtooth)", "Lead 3 (calliope)", "Lead 4 (chiff)",
-     "Lead 5 (charang)", "Lead 6 (voice)", "Lead 7 (fifths)",
-     "Lead 8 (bass + lead)", "Pad 1 (new age)", "Pad 2 (warm)",
-     "Pad 3 (polysynth)", "Pad 4 (choir)", "Pad 5 (bowed)",
-     "Pad 6 (metallic)", "Pad 7 (halo)", "Pad 8 (sweep)",
-     "FX 1 (rain)", "FX 2 (soundtrack)", "FX 3 (crystal)",
-     "FX 4 (atmosphere)", "FX 5 (brightness)", "FX 6 (goblins)",
-     "FX 7 (echoes)", "FX 8 (sci-fi)", "Sitar", "Banjo",
-     "Shamisen", "Koto", "Kalimba", "Bag pipe", "Fiddle",
-     "Shanai", "Tinkle Bell", "Agogo", "Steel Drums",
-     "Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum",
-     "Reverse Cymbal", "Guitar Fret Noise", "Breath Noise",
-     "Seashore", "Bird Tweet", "Telephone Ring",
-     "Helicopter", "Applause", "Gunshot"};
+    {" Acoustic Grand Piano", " Bright Acoustic Piano",
+     " Electric Grand Piano", " Honky-tonk Piano",
+     " Electric Piano 1", " Electric Piano 2", " Harpsichord",
+     " Clavi", " Celesta", " Glockenspiel", " Music Box",
+     " Vibraphone", " Marimba", " Xylophone", " Tubular Bells",
+     " Dulcimer", " Drawbar Organ", " Percussive Organ",
+     " Rock Organ", " Church Organ", " Reed Organ",
+     " Accordion", " Harmonica", " Tango Accordion",
+     " Acoustic Guitar (nylon)", " Acoustic Guitar (steel)",
+     " Electric Guitar (jazz)", " Electric Guitar (clean)",
+     " Electric Guitar (muted)", " Overdriven Guitar",
+     " Distortion Guitar", " Guitar harmonics",
+     " Acoustic Bass", " Electric Bass (finger)",
+     " Electric Bass (pick)", " Fretless Bass",
+     " Slap Bass 1", " Slap Bass 2", " Synth Bass 1",
+     " Synth Bass 2", " Violin", " Viola", " Cello",
+     " Contrabass", " Tremolo Strings", " Pizzicato Strings",
+     " Orchestral Harp", " Timpani", " String Ensemble 1",
+     " String Ensemble 2", " SynthStrings 1", " SynthStrings 2",
+     " Choir Aahs", " Voice Oohs", " Synth Voice",
+     " Orchestra Hit", " Trumpet", " Trombone", " Tuba",
+     " Muted Trumpet", " French Horn", " Brass Section",
+     " SynthBrass 1", " SynthBrass 2", " Soprano Sax",
+     " Alto Sax", " Tenor Sax", " Baritone Sax", " Oboe",
+     " English Horn", " Bassoon", " Clarinet", " Piccolo",
+     " Flute", " Recorder", " Pan Flute", " Blown Bottle",
+     " Shakuhachi", " Whistle", " Ocarina", " Lead 1 (square)",
+     " Lead 2 (sawtooth)", " Lead 3 (calliope)", " Lead 4 (chiff)",
+     " Lead 5 (charang)", " Lead 6 (voice)", " Lead 7 (fifths)",
+     " Lead 8 (bass + lead)", " Pad 1 (new age)", " Pad 2 (warm)",
+     " Pad 3 (polysynth)", " Pad 4 (choir)", " Pad 5 (bowed)",
+     " Pad 6 (metallic)", " Pad 7 (halo)", " Pad 8 (sweep)",
+     " FX 1 (rain)", " FX 2 (soundtrack)", " FX 3 (crystal)",
+     " FX 4 (atmosphere)", " FX 5 (brightness)", " FX 6 (goblins)",
+     " FX 7 (echoes)", " FX 8 (sci-fi)", " Sitar", " Banjo",
+     " Shamisen", " Koto", " Kalimba", " Bag pipe", " Fiddle",
+     " Shanai", " Tinkle Bell", " Agogo", " Steel Drums",
+     " Woodblock", " Taiko Drum", " Melodic Tom", " Synth Drum",
+     " Reverse Cymbal", " Guitar Fret Noise", " Breath Noise",
+     " Seashore", " Bird Tweet", " Telephone Ring",
+     " Helicopter", " Applause", " Gunshot"};
 
 int instrument;
 
@@ -206,7 +220,7 @@ enum
 // List of keys and offset values
 
 char *keys[] =
-    {"F/Eb/Bb", "G/C/F", "A/D/G", "C#/D/G", "B/C/C#",
+    {" F/Eb/Bb", " G/C/F", " A/D/G", " C#/D/G", " B/C/C#",
      " C System", " B System"};
 
 int keyvals[Length(keys)][ROWS] =
@@ -268,21 +282,21 @@ int keyboard[ROWS][BUTTONS] =
       kKeyboardSlashKey,
       -1}};
 
-int basskeys[] =
-    {kKeyboardF1Key,
-     kKeyboardF2Key,
-     kKeyboardF3Key,
-     kKeyboardF4Key,
+int basskeys[BASSBUTTONS][2] =
+    {{kKeyboardF1Key, kKeyboard1Key},
+     {kKeyboardF2Key, kKeyboard2Key},
+     {kKeyboardF3Key, kKeyboard3Key},
+     {kKeyboardF4Key, kKeyboard4Key},
 
-     kKeyboardF5Key,
-     kKeyboardF6Key,
-     kKeyboardF7Key,
-     kKeyboardF8Key,
+     {kKeyboardF5Key, kKeyboard5Key},
+     {kKeyboardF6Key, kKeyboard6Key},
+     {kKeyboardF7Key, kKeyboard7Key},
+     {kKeyboardF8Key, kKeyboard8Key},
 
-     kKeyboardF9Key,
-     kKeyboardF10Key,
-     kKeyboardF11Key,
-     kKeyboardF12Key};
+     {kKeyboardF9Key, kKeyboard9Key},
+     {kKeyboardF10Key, kKeyboard0Key},
+     {kKeyboardF11Key, kKeyboardMinusKey},
+     {kKeyboardF12Key, kKeyboardEqualsKey}};
 
 // Keyboard notes
 
@@ -610,7 +624,7 @@ int main(int argc, char *argv[])
 
     // Create combo box
 
-    HIComboBoxCreate(&rect, CFSTR("Accordion"), NULL, NULL,
+    HIComboBoxCreate(&rect, CFSTR(" Accordion"), NULL, NULL,
                      kHIComboBoxStandardAttributes,
                      &combo);
 
@@ -630,7 +644,7 @@ int main(int argc, char *argv[])
 
         // Set the current instrument
 
-        if (strcmp(instruments[i], "Accordion") == 0)
+        if (strcmp(instruments[i], " Accordion") == 0)
             instrument = i;
     }
 
@@ -671,15 +685,15 @@ int main(int argc, char *argv[])
     // Place in the group box
 
     HIViewAddSubview(group, text);
-    HIViewPlaceInSuperviewAt(text, 420, 18);
+    HIViewPlaceInSuperviewAt(text, 400, 18);
 
     // Bounds of combo box
 
-    rect.size.width = 70;
+    rect.size.width = 90;
 
     // Create combo box
 
-    HIComboBoxCreate(&rect, CFSTR("A/D/G"), NULL, NULL,
+    HIComboBoxCreate(&rect, CFSTR(" A/D/G"), NULL, NULL,
                      kHIComboBoxStandardAttributes,
                      &combo);
 
@@ -700,14 +714,14 @@ int main(int argc, char *argv[])
 
         // Set current key
 
-        if (strcmp(keys[i], "A/D/G") == 0)
+        if (strcmp(keys[i], " A/D/G") == 0)
             key = i;
     }
 
     // Place in the group box
 
     HIViewAddSubview(group, combo);
-    HIViewPlaceInSuperviewAt(combo, 460, 16);
+    HIViewPlaceInSuperviewAt(combo, 440, 16);
 
     // Bounds of text
 
@@ -765,7 +779,7 @@ int main(int argc, char *argv[])
     // Bounds of push button
 
     bounds.bottom = 20;
-    bounds.right  = 70;
+    bounds.right  = 90;
 
     // Create push button
 
@@ -778,7 +792,7 @@ int main(int argc, char *argv[])
     // Place in the group box
 
     HIViewAddSubview(group, quit);
-    HIViewPlaceInSuperviewAt(quit, 460, 54);
+    HIViewPlaceInSuperviewAt(quit, 440, 54);
 
     // Group box bounds
 
@@ -1289,7 +1303,6 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
                     if (buttons[i][j])
                     {
                         buttons[i][j] = false;
-                        HIViewSetValue(display[i][j], false);
 
 			int k;
 
@@ -1307,6 +1320,12 @@ OSStatus ApplicationHandler(EventHandlerCallRef next,
 			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
+
+			if ((type == CHROMATIC) && (hilites[key][i][j] == true))
+			    HIViewSetValue(display[i][k], true);
+
+			else
+			    HIViewSetValue(display[i][k], false);
 
                         int note = notes[type][k][bellows] + keyvals[key][i];
                         MusicDeviceMIDIEvent(synthUnit, kMidiMessageNoteOff + i,
@@ -1773,7 +1792,6 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		    if (keyboard[i][j] == keyCode && !buttons[i][j])
 		    {
 			buttons[i][j] = true;
-			HIViewSetValue(display[i][j], true);
 
 			// Play the note
 
@@ -1794,6 +1812,12 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 			    break;
 			}
 
+			if ((type == CHROMATIC) && (hilites[key][i][k] == true))
+			    HIViewSetValue(display[i][j], false);
+
+			else
+			    HIViewSetValue(display[i][j], true);
+
 			int note = notes[type][k][bellows] + keyvals[key][i];
 			MusicDeviceMIDIEvent(synthUnit,
 					     kMidiMessageNoteOn + i,
@@ -1805,7 +1829,8 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
 	    for (int i = 0; i < Length(basskeys); i++)
 	    {
-		if (basskeys[i] == keyCode && !bass[i])
+		if (((basskeys[i][0] == keyCode) ||
+		     (basskeys[i][1] == keyCode)) && !bass[i])
 		{
 		    bass[i] = true;
 		    HIViewSetValue(bassdisplay[i], true);
@@ -1937,7 +1962,6 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 		    if (keyboard[i][j] == keyCode && buttons[i][j])
 		    {
 			buttons[i][j] = false;
-			HIViewSetValue(display[i][j], false);
 
 			// Stop note
 
@@ -1958,6 +1982,12 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 			    break;
 			}
 
+			if ((type == CHROMATIC) && (hilites[key][i][k] == true))
+			    HIViewSetValue(display[i][j], true);
+
+			else
+			    HIViewSetValue(display[i][j], false);
+
 			int note = notes[type][k][bellows] + keyvals[key][i];
 			MusicDeviceMIDIEvent(synthUnit,
 					     kMidiMessageNoteOff + i,
@@ -1969,7 +1999,8 @@ OSStatus  KeyboardHandler(EventHandlerCallRef next,
 
 	    for (int i = 0; i < Length(basskeys); i++)
 	    {
-		if (basskeys[i] == keyCode && bass[i])
+		if (((basskeys[i][0] == keyCode) ||
+		     (basskeys[i][1] == keyCode)) && bass[i])
 		{
 		    bass[i] = false;
 		    HIViewSetValue(bassdisplay[i], false);
