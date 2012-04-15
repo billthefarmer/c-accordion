@@ -32,15 +32,15 @@
 // Tool ids
 
 enum
-    {INST = 101,
-     REVS,
-     KEYS,
-     VOLM,
-     NOTE,
-     QUIT,
-     TXTS,
-     BTNS,
-     STAT};
+    {INST_ID = 101,
+     REVS_ID,
+     KEYS_ID,
+     VOLM_ID,
+     NOTE_ID,
+     QUIT_ID,
+     TXTS_ID,
+     BTNS_ID,
+     STAT_ID};
 
 // Types
 
@@ -64,7 +64,9 @@ enum
 
 enum
     {ROWS        =  3,
+     TYPES       =  2,
      BUTTONS     = 11,
+     DIRECTIONS  =  2,
      BASSBUTTONS = 12};
 
 // Button size
@@ -206,14 +208,62 @@ char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
 	 {"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"}}
     };
 
-int basskeys[] =
-  {VK_F1, VK_F2,  VK_F3,  VK_F4,
-   VK_F5, VK_F6,  VK_F7,  VK_F8,
-   VK_F9, VK_F10, VK_F11, VK_F12};
+// Hilites
+
+BOOL hilites[LENGTH(keys)][ROWS][BUTTONS] =
+    {
+	// F/Bb/Eb
+
+	{},
+
+	// G/C/F
+
+	{},
+
+	// A/D/G
+
+	{},
+
+	// C#/D/G
+
+	{},
+
+	// B/C/C#
+
+	{},
+
+	// C System
+
+	{{TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE},
+	 {FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE},
+	 {FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE}},
+
+	// B System
+
+	{{FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE},
+	 {FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE},
+	 {TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE}}
+    };
+
+int basskeys[BASSBUTTONS][2] =
+    {{VK_F1, '1'},
+     {VK_F2, '2'},
+     {VK_F3, '3'},
+     {VK_F4, '4'},
+   
+     {VK_F5, '5'},
+     {VK_F6, '6'},
+     {VK_F7, '7'},
+     {VK_F8, '8'},
+
+     {VK_F9, '9'},
+     {VK_F10, '0'},
+     {VK_F11, 0xbd},
+     {VK_F12, 0xbb}};
 
 // Midi notes for C Diatonic, G Chromatic
 
-BYTE notes[2][BUTTONS][2] =
+BYTE notes[TYPES][BUTTONS][DIRECTIONS] =
     {{{52, 57}, // C Diatonic
       {55, 59},
       {60, 62},
@@ -239,7 +289,7 @@ BYTE notes[2][BUTTONS][2] =
 
 // Chords
 
-BYTE chords[LENGTH(keys)][BASSBUTTONS][2][2] =
+BYTE chords[LENGTH(keys)][BASSBUTTONS][DIRECTIONS][2] =
     {
 	// F/Bb/Eb
 
@@ -483,7 +533,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 " start.",   // Text.
 			 WS_VISIBLE | WS_CHILD,
 			 0, 0, 0, 0,
-			 hWnd, (HMENU)STAT,
+			 hWnd, (HMENU)STAT_ID,
 			 hinst, NULL);
 
 	// Create group box
@@ -503,7 +553,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 SS_LEFT,
 			 20, 24, 76, 20,
-			 hWnd, (HMENU)TXTS,
+			 hWnd, (HMENU)TXTS_ID,
 			 hinst, NULL);
 
 	// Create instruments pulldown
@@ -513,7 +563,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD | WS_VSCROLL |
 			 CBS_DROPDOWNLIST,
 			 102, 20, 168, 24,
-			 hWnd, (HMENU)INST,
+			 hWnd, (HMENU)INST_ID,
 			 hinst, NULL);
 
 	// Add the instrument names
@@ -528,11 +578,11 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Create reverse tickbox
 
 	hrev =
-	    CreateWindow(WC_BUTTON, "Reverse:",
-			 WS_VISIBLE | WS_CHILD | BS_LEFTTEXT |
-			 BS_CHECKBOX,
-			 279, 20, 81, 24,
-			 hWnd, (HMENU)REVS,
+	    CreateWindow(WC_BUTTON, "Reverse",
+			 WS_VISIBLE | WS_CHILD |
+			 BS_AUTOCHECKBOX | BS_PUSHLIKE,
+			 289, 19, 81, 26,
+			 hWnd, (HMENU)REVS_ID,
 			 hinst, NULL);
 
 	// Create text
@@ -542,7 +592,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 SS_LEFT,
 			 411, 24, 76, 20,
-			 hWnd, (HMENU)TXTS,
+			 hWnd, (HMENU)TXTS_ID,
 			 hinst, NULL);
 
 	// Create keys pulldown
@@ -552,7 +602,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 CBS_DROPDOWNLIST,
 			 449, 20, 90, 24,
-			 hWnd, (HMENU)KEYS,
+			 hWnd, (HMENU)KEYS_ID,
 			 hinst, NULL);
 
 	// Add the keys
@@ -571,7 +621,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 SS_LEFT,
 			 20, 58, 54, 20,
-			 hWnd, (HMENU)TXTS,
+			 hWnd, (HMENU)TXTS_ID,
 			 hinst, NULL);
 
 	// Create volume control
@@ -581,7 +631,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 TBS_HORZ,
 			 102, 54, 168, 24,
-			 hWnd, (HMENU)VOLM,
+			 hWnd, (HMENU)VOLM_ID,
 			 hinst, NULL);
 
 	SendMessage(hvol, TBM_SETRANGE, TRUE, MAKELONG(0, MAXVOL));
@@ -590,11 +640,11 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	// Create notes tickbox
 
 	hnot =
-	    CreateWindow(WC_BUTTON, "Notes:",
+	    CreateWindow(WC_BUTTON, "Notes",
 			 WS_VISIBLE | WS_CHILD |
-			 BS_LEFTTEXT | BS_CHECKBOX,
-			 279, 54, 81, 24,
-			 hWnd, (HMENU)NOTE,
+			 BS_AUTOCHECKBOX | BS_PUSHLIKE,
+			 289, 53, 81, 26,
+			 hWnd, (HMENU)NOTE_ID,
 			 hinst, NULL);
 
 	// Create quit button
@@ -604,7 +654,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 BS_PUSHBUTTON,
 			 448, 53, 92, 26,
-			 hWnd, (HMENU)QUIT,
+			 hWnd, (HMENU)QUIT_ID,
 			 hinst, NULL);
 
 	// Create group box
@@ -626,7 +676,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 SS_CENTER,
 			 20, 107, 520, 52,
-			 hWnd, (HMENU)TXTS,
+			 hWnd, (HMENU)TXTS_ID,
 			 hinst, NULL);
 
 	// Get status bar dimensions
@@ -663,7 +713,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 BS_PUSHBUTTON,
 			 x, y, BUTTONSIZE, BUTTONSIZE,
-			 hWnd, (HMENU)BTNS,
+			 hWnd, (HMENU)BTNS_ID,
 			 hinst, NULL);
 	}
 
@@ -682,7 +732,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 				 WS_VISIBLE | WS_CHILD |
 				 BS_PUSHBUTTON,
 				 x, y, BUTTONSIZE, BUTTONSIZE,
-				 hWnd, (HMENU)BTNS,
+				 hWnd, (HMENU)BTNS_ID,
 				 hinst, NULL);
 	    }
 	}
@@ -694,7 +744,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			 WS_VISIBLE | WS_CHILD |
 			 BS_PUSHBUTTON,
 			 21, bottom - 54, BUTTONSIZE, BUTTONSIZE,
-			 hWnd, (HMENU)BTNS,
+			 hWnd, (HMENU)BTNS_ID,
 			 hinst, NULL);
 
 	// Open a midi out device
@@ -811,7 +861,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 	{
 	    // Instrument control
 
-	case INST:
+	case INST_ID:
 	    switch (HIWORD(wParam))
 	    {
 	    case CBN_SELENDOK:
@@ -833,7 +883,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	    // Reverse control
 
-	case REVS:
+	case REVS_ID:
 	    if (HIWORD(wParam) == BN_CLICKED)
 		ReverseButtons((HWND)lParam);
 
@@ -844,7 +894,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	    // Key control
 
-	case KEYS:
+	case KEYS_ID:
 	    switch (HIWORD(wParam))
 	    {
 	    case CBN_SELENDOK:
@@ -866,7 +916,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	    // Notes control
 
-	case NOTE:
+	case NOTE_ID:
 	    if (HIWORD(wParam) == BN_CLICKED)
 		DisplayNotes((HWND)lParam);
 
@@ -877,23 +927,18 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	    // Keyboard buttons, set the focus back to the window
 
-	case BTNS:
+	case BTNS_ID:
 	    SetFocus(hWnd);
 	    break;
 
 	    // Quit button
 
-	case QUIT:
+	case QUIT_ID:
 	    if (HIWORD(wParam) == BN_CLICKED)
 	    {
-		if (MessageBox(hWnd, "Really?", "Quit",
-			       MB_OKCANCEL | MB_ICONQUESTION |
-			       MB_DEFBUTTON1) == IDOK)
-		{
-		    midiOutReset(hmdo);
-		    midiOutClose(hmdo);
-		    PostQuitMessage(0);
-		}
+		midiOutReset(hmdo);
+		midiOutClose(hmdo);
+		PostQuitMessage(0);
 	    }
 	    break;
 	}
@@ -936,9 +981,7 @@ UINT ReverseButtons(HWND hrev)
 {
     midiOutReset(hmdo);
 
-    reverse = !reverse;
-    SendMessage(hrev, BM_SETCHECK,
-		reverse? BST_CHECKED: BST_UNCHECKED, 0);
+    reverse = SendMessage(hrev, BM_GETCHECK, 0, 0);
 
     // Change display
 
@@ -964,9 +1007,7 @@ UINT ChangeKey(HWND hkey)
 
 UINT DisplayNotes(HWND hnot)
 {
-    shownotes = !shownotes;
-    SendMessage(hnot, BM_SETCHECK,
-		shownotes? BST_CHECKED: BST_UNCHECKED, 0);
+    shownotes = SendMessage(hnot, BM_GETCHECK, 0, 0);
 
     // Change display
 
@@ -977,6 +1018,7 @@ UINT DisplayNotes(HWND hnot)
 
 UINT ChangeDisplay()
 {
+    // Change display
 
     for (int i = 0; i < LENGTH(notetops[0]); i++)
     {
@@ -999,14 +1041,17 @@ UINT ChangeDisplay()
 		break;
 	    }
 
+	    // Show notes
+
 	    if (shownotes)
 		SetWindowText(display[i][j], notetops[key][i][k]);
 
 	    else
 		SetWindowText(display[i][j], NULL);
 
-	    if ((type == CHROMATIC) && (notetops[key][i][k] != NULL) &&
-		(strlen(notetops[key][i][k]) > 1))
+	    // Show hilites for chromatic
+
+	    if ((type == CHROMATIC) && (hilites[key][i][k] == TRUE))
 		SendMessage(display[i][j], BM_SETSTYLE, BS_DEFPUSHBUTTON, TRUE);
 
 	    else
@@ -1184,7 +1229,8 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	for (int i = 0; i < LENGTH(basskeys); i++)
 	{
-	    if (w == basskeys[i] && !bass[i])
+	    if (((w == basskeys[i][0]) ||
+		 (w == basskeys[i][1])) && !bass[i])
 	    {
 		bass[i] = TRUE;
 		SendMessage(bassdisplay[i], BM_SETSTATE, TRUE, 0);
@@ -1320,7 +1366,8 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 	for (int i = 0; i < LENGTH(basskeys); i++)
 	{
-	    if (w == basskeys[i] && bass[i])
+	    if (((w == basskeys[i][0]) ||
+		 (w == basskeys[i][1])) && bass[i])
 	    {
 		bass[i] = FALSE;
 		SendMessage(bassdisplay[i], BM_SETSTATE, FALSE, 0);

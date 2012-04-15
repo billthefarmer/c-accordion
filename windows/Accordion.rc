@@ -6,8 +6,8 @@ Accordion ICON "Accordion.ico"
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "Accordion.manifest"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION    	1,0,3,0
-PRODUCTVERSION 	1,0,3,0
+FILEVERSION    	1,0,4,0
+PRODUCTVERSION 	1,0,4,0
 FILEFLAGSMASK  	VS_FFI_FILEFLAGSMASK
 FILEFLAGS      	0x0L
 FILEOS         	VOS__WINDOWS32
@@ -20,12 +20,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "Bill Farmer"
             VALUE "FileDescription",  "Accordion emulator"
-            VALUE "FileVersion",      "1.0.3"
+            VALUE "FileVersion",      "1.0.4"
             VALUE "InternalName",     "Accordion"
             VALUE "LegalCopyright",   "Copyright (C) 2012 Bill Farmer"
             VALUE "OriginalFilename", "Accordion.exe"
             VALUE "ProductName",      "Accordion"
-            VALUE "ProductVersion",   "1.0.3"
+            VALUE "ProductVersion",   "1.0.4"
         END
     END
     BLOCK "VarFileInfo"
