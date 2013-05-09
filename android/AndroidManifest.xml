@@ -24,7 +24,8 @@
       </intent-filter>
     </activity>
     <activity
-	android:name="org.billthefarmer.accordion.SettingsActivity" >
+	android:name="org.billthefarmer.accordion.SettingsActivity"
+	android:screenOrientation="portrait" >
     </activity>
   </application>
 
