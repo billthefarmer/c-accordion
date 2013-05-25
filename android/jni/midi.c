@@ -22,13 +22,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <jni.h>
-#include <assert.h>
 
 // for EAS midi
 #include "eas.h"
+#include "eas_reverb.h"
 
 // determines how many EAS buffers to fill a host buffer
-#define NUM_BUFFERS 8
+#define NUM_BUFFERS 4
 
 // EAS data
 static EAS_DATA_HANDLE pEASData;
@@ -37,29 +37,30 @@ static EAS_PCM *buffer;
 static EAS_RESULT result;
 static EAS_I32 bufferSize;
 static EAS_HANDLE midiHandle;
-static EAS_I32 polyphony;
 
 // init EAS midi
 jint
-Java_org_billthefarmer_accordion_MainActivity_midiInit(JNIEnv *env,
-						       jobject clazz)
+Java_org_billthefarmer_accordion_MidiDriver_init(JNIEnv *env,
+						 jobject clazz)
 {
     // get the library configuration
     pLibConfig = EAS_Config();
-    assert(NULL != pLibConfig);
-    assert(LIB_VERSION == pLibConfig->libVersion);
-
-    polyphony = pLibConfig->maxVoices;
+    if (pLibConfig == NULL || pLibConfig->libVersion != LIB_VERSION)
+	return 0;
 
     // calculate buffer size
     bufferSize = pLibConfig->mixBufferSize * pLibConfig->numChannels *
-	(EAS_I32)sizeof(EAS_PCM) * NUM_BUFFERS;
+	NUM_BUFFERS;
 
     // init library
     if ((result = EAS_Init(&pEASData)) != EAS_SUCCESS)
-    {
         return 0;
-    }
+
+    // select reverb preset and enable
+    EAS_SetParameter(pEASData, EAS_MODULE_REVERB, EAS_PARAM_REVERB_PRESET,
+		     EAS_PARAM_REVERB_CHAMBER);
+    EAS_SetParameter(pEASData, EAS_MODULE_REVERB, EAS_PARAM_REVERB_BYPASS,
+		     EAS_FALSE);
 
     // open midi stream
     if (result = EAS_OpenMIDIStream(pEASData, &midiHandle, NULL) !=
@@ -69,90 +70,111 @@ Java_org_billthefarmer_accordion_MainActivity_midiInit(JNIEnv *env,
 	return 0;
     }
 
-    // set volume
-    // if (result = EAS_SetVolume(pEASData, midiHandle, 90) !=
-    // 	 EAS_SUCCESS)
-    // {
-    // 	EAS_CloseMIDIStream(pEASData, midiHandle);
-    // 	EAS_Shutdown(pEASData);
-    // 	return 0;
-    // }
-
     return bufferSize;
+}
+
+// midi config
+jintArray
+Java_org_billthefarmer_accordion_MidiDriver_config(JNIEnv *env,
+						   jobject clazz)
+{
+    jboolean isCopy;
+
+    if (pLibConfig == NULL)
+	return NULL;
+
+    jintArray configArray = (*env)->NewIntArray(env, 4);
+
+    jint *config = (*env)->GetIntArrayElements(env, configArray, &isCopy);
+
+    config[0] = pLibConfig->maxVoices;
+    config[1] = pLibConfig->numChannels;
+    config[2] = pLibConfig->sampleRate;
+    config[3] = pLibConfig->mixBufferSize;
+
+    (*env)->ReleaseIntArrayElements(env, configArray, config, 0);
+
+    return configArray;
 }
 
 // midi render
 jint
-Java_org_billthefarmer_accordion_MainActivity_midiRender(JNIEnv *env,
-							 jobject clazz,
-							 jbyteArray byteArray)
+Java_org_billthefarmer_accordion_MidiDriver_render(JNIEnv *env,
+						   jobject clazz,
+						   jshortArray shortArray)
 {
     jboolean isCopy;
     EAS_I32 numGenerated;
     EAS_I32 count;
     jsize size;
 
-    buffer =
-	(EAS_PCM *)(*env)->GetByteArrayElements(env, byteArray, &isCopy);
+    // jbyte* GetByteArrayElements(jbyteArray array, jboolean* isCopy)
+    // void ReleaseByteArrayElements(jbyteArray array, jbyte* elems,
 
-    size = (*env)->GetArrayLength(env, byteArray);
+    // void* GetPrimitiveArrayCritical(JNIEnv*, jarray, jboolean*);
+    // void ReleasePrimitiveArrayCritical(JNIEnv*, jarray, void*, jint);
+
+    if (pEASData == NULL)
+	return 0;
+
+    buffer =
+	(EAS_PCM *)(*env)->GetShortArrayElements(env, shortArray, &isCopy);
+
+    size = (*env)->GetArrayLength(env, shortArray);
 
     count = 0;
     while (count < size)
     {
-    	result = EAS_Render(pEASData, buffer + count / sizeof(EAS_PCM),
+    	result = EAS_Render(pEASData, buffer + count,
     			    pLibConfig->mixBufferSize, &numGenerated);
     	if (result != EAS_SUCCESS)
     	    break;
 
-    	count += numGenerated * pLibConfig->numChannels * sizeof(EAS_PCM);
+    	count += numGenerated * pLibConfig->numChannels;
     }
 
-    buffer[0] = 127;
-    buffer[1] = 127;
-    buffer[2] = 127;
-    buffer[3] = 127;
-    buffer[4] = 127;
-    buffer[128] = -127;
-    buffer[129] = -127;
-    buffer[130] = -127;
-    buffer[131] = -127;
-    buffer[132] = -127;
-
-    (*env)->ReleaseByteArrayElements(env, byteArray, (jbyte *)buffer, 0);
+    (*env)->ReleaseShortArrayElements(env, shortArray, buffer, 0);
 
     return count;
 }
 
 // midi write
 jboolean
-Java_org_billthefarmer_accordion_MainActivity_midiWrite(JNIEnv *env,
-							jobject clazz,
-							jint s, jint n,
-							jint v)
+Java_org_billthefarmer_accordion_MidiDriver_write(JNIEnv *env,
+						  jobject clazz,
+						  jbyteArray byteArray)
 {
-static EAS_U8 buf[3];
+    jboolean isCopy;
+    jint length;
+    EAS_U8 *buf;
 
-    buf[0] = s;
-    buf[1] = n;
-    buf[2] = v;
+    if (pEASData == NULL || midiHandle == NULL)
+	return JNI_FALSE;
 
-    result = EAS_WriteMIDIStream(pEASData, midiHandle, buf, sizeof(buf));
+    buf = (EAS_U8 *)(*env)->GetByteArrayElements(env, byteArray, &isCopy);
+    length = (*env)->GetArrayLength(env, byteArray);
+
+    result = EAS_WriteMIDIStream(pEASData, midiHandle, buf, length);
+
+    (*env)->ReleaseByteArrayElements(env, byteArray, buf, 0);
 
     if (result != EAS_SUCCESS)
-	return 0;
+	return JNI_FALSE;
 
-    return 1;
+    return JNI_TRUE;
 }
 
 // shutdown EAS midi
 jboolean
-Java_org_billthefarmer_accordion_MainActivity_midiShutdown(JNIEnv *env,
-							   jobject clazz)
+Java_org_billthefarmer_accordion_MidiDriver_shutdown(JNIEnv *env,
+						     jobject clazz)
 {
+
+    if (pEASData == NULL || midiHandle == NULL)
+	return JNI_FALSE;
 
     EAS_CloseMIDIStream(pEASData, midiHandle);
     EAS_Shutdown(pEASData);
 
-    return 1;
+    return JNI_TRUE;
 }

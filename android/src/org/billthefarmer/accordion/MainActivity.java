@@ -23,11 +23,11 @@
 
 package org.billthefarmer.accordion;
 
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
+import org.billthefarmer.accordion.MidiDriver.OnMidiStartListener;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,16 +40,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity
-    implements OnTouchListener, OnCheckedChangeListener
+    implements OnTouchListener, OnCheckedChangeListener, OnMidiStartListener
 {
     // Button ids
 
-    static final int buttons[][] =
+    private static final int buttons[][] =
     {{R.id.button_22, R.id.button_23,
       R.id.button_24, R.id.button_25,
       R.id.button_26, R.id.button_27,
@@ -69,7 +71,7 @@ public class MainActivity extends Activity
 
     // Bass button ids
 
-    static final int basses[] =
+    private static final int basses[] =
     {R.id.bass_1, R.id.bass_2,
      R.id.bass_3, R.id.bass_4,
      R.id.bass_5, R.id.bass_6,
@@ -79,7 +81,7 @@ public class MainActivity extends Activity
 
     // List of key offset values
 
-    static final int keyvals[][] =
+    private static final int keyvals[][] =
     {{ 3, -2, -7},  // F/Bb/Eb
      { 5,  0, -5},  // G/C/F
      { 7,  2, -3},  // A/D/G
@@ -93,16 +95,16 @@ public class MainActivity extends Activity
 
     // Types
 
-    static final int DIATONIC = 0;
-    static final int CHROMATIC = 1;
+    private static final int DIATONIC = 0;
+    private static final int CHROMATIC = 1;
 
-    static final int types[] =
+    private static final int types[] =
     {DIATONIC, DIATONIC, DIATONIC, DIATONIC,
      DIATONIC, CHROMATIC, CHROMATIC};
 
     // Midi notes for C Diatonic, G Chromatic
 
-    static final byte notes[][][] =
+    private static final byte notes[][][] =
     {{{52, 57}, // C Diatonic
       {55, 59},
       {60, 62},
@@ -128,7 +130,7 @@ public class MainActivity extends Activity
 
     // Chords
 
-    static final byte chords[][][][] =
+    private static final byte chords[][][][] =
     {
 	// F/Bb/Eb
 
@@ -196,54 +198,54 @@ public class MainActivity extends Activity
 
     // Keyboard notes
 
-    static final String notetops[][][] =
-    {
-    	// F/Bb/Eb
+    // private static final String notetops[][][] =
+    // {
+    // 	// F/Bb/Eb
 
-    	{{"G", "Bb", "Eb", "G", "Bb", "Eb", "G", "Bb", "Eb", "G"},
-    	 {"D", "F", "Bb", "D", "F", "Bb", "D", "F", "Bb", "D", "F"},
-    	 {"C", "F", "A", "C", "F", "A", "C", "F", "A", "C"}},
+    // 	{{"G", "Bb", "Eb", "G", "Bb", "Eb", "G", "Bb", "Eb", "G"},
+    // 	 {"D", "F", "Bb", "D", "F", "Bb", "D", "F", "Bb", "D", "F"},
+    // 	 {"C", "F", "A", "C", "F", "A", "C", "F", "A", "C"}},
 
-    	// G/C/F
+    // 	// G/C/F
 
-    	{{"A", "C", "F", "A", "C", "F", "A", "C", "F", "A"},
-    	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
-    	 {"D", "G", "B", "D", "G", "B", "D", "G", "B", "D"}},
+    // 	{{"A", "C", "F", "A", "C", "F", "A", "C", "F", "A"},
+    // 	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+    // 	 {"D", "G", "B", "D", "G", "B", "D", "G", "B", "D"}},
 
-    	// A/D/G
+    // 	// A/D/G
 
-    	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
-    	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
-    	 {"E", "A", "C#", "E", "A", "C#", "E", "A", "C#", "E"}},
+    // 	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+    // 	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+    // 	 {"E", "A", "C#", "E", "A", "C#", "E", "A", "C#", "E"}},
 
-    	// C#/D/G
+    // 	// C#/D/G
 
-    	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
-    	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
-    	 {"G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F", "G#"}},
+    // 	{{"B", "D", "G", "B", "D", "G", "B", "D", "G", "B"},
+    // 	 {"F#", "A", "D", "F#", "A", "D", "F#", "A", "D", "F#", "A"},
+    // 	 {"G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F", "G#"}},
 
-    	// B/C/C#
+    // 	// B/C/C#
 
-    	{{"F", "G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F"},
-    	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
-    	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}},
+    // 	{{"F", "G#", "C#", "F", "G#", "C#", "F", "G#", "C#", "F"},
+    // 	 {"E", "G", "C", "E", "G", "C", "E", "G", "C", "E", "G"},
+    // 	 {"F#", "B", "D#", "F#", "B", "D#", "F#", "B", "D#", "F#"}},
 
-    	// C System
+    // 	// C System
 
-    	{{"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"},
-    	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
-    	 {"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"}},
+    // 	{{"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"},
+    // 	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+    // 	 {"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"}},
 
-    	// B System
+    // 	// B System
 
-    	{{"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"},
-    	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
-    	 {"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"}}
-    };
+    // 	{{"A", "C", "Eb", "F#", "A", "C", "Eb", "F#", "A", "C"},
+    // 	 {"G", "Bb", "C#", "E", "G", "Bb", "C#", "E", "G", "Bb", "C#"},
+    // 	 {"Ab", "B", "D", "F", "Ab", "B", "D", "F", "Ab", "B"}}
+    // };
 
     // Hilites
 
-    static final boolean hilites[][][] =
+    private static final boolean hilites[][][] =
     {
 	// F/Bb/Eb
 
@@ -280,26 +282,34 @@ public class MainActivity extends Activity
 
     // Midi codes
 
-    static final int noteOff = 0x80;
-    static final int noteOn  = 0x90;
-    static final int change  = 0xc0;
+    private static final int noteOff = 0x80;
+    private static final int noteOn  = 0x90;
+    private static final int change  = 0xc0;
 
     // Preferences
 
-    final static String PREF_INSTRUMENT = "pref_instrument";
-    final static String PREF_REVERSE = "pref_reverse";
-    final static String PREF_FASCIA = "pref_fascia";
-    final static String PREF_KEY = "pref_key";
+    private final static String PREF_INSTRUMENT = "pref_instrument";
+    private final static String PREF_REVERSE = "pref_reverse";
+    private final static String PREF_LAYOUT = "pref_layout";
+    private final static String PREF_FASCIA = "pref_fascia";
+    private final static String PREF_KEY = "pref_key";
+
+    // Layouts
+
+    private static final int LAYOUT_STANDARD = 0;
+    private static final int LAYOUT_LOWER_25 = 1;
+    private static final int LAYOUT_UPPER_25 = 2;
 
     // Fascias
 
-    final static int fascias[] =
-    {R.drawable.bg_onyx, R.drawable.bg_cherry,
-     R.drawable.bg_rosewood,  R.drawable.bg_olivewood};
+    private final static int fascias[] =
+    {R.drawable.bg_onyx, R.drawable.bg_teak,
+     R.drawable.bg_cherry, R.drawable.bg_rosewood,
+     R.drawable.bg_olivewood};
 
     // Button states
 
-    boolean buttonStates[][] =
+    private boolean buttonStates[][] =
     {{false, false, false, false, false, false,
       false, false, false, false, false},
      {false, false, false, false, false, false,
@@ -307,25 +317,31 @@ public class MainActivity extends Activity
      {false, false, false, false, false, false,
       false, false, false, false, false}};
 
-    boolean bassStates[] =
+    private boolean bassStates[] =
     {false, false, false, false, false, false,
      false, false, false, false, false, false};
 
-    boolean bellows = false;
-    boolean reverse = false;
+    private boolean bellows = false;
+    private boolean reverse = false;
 
     // Status
 
-    int instrument;
-    int volume;
-    int fascia;
-    int type;
-    int key;
+    private int instrument;
+    private int volume;
+    private int layout;
+    private int fascia;
+    private int type;
+    private int key;
 
-    Audio audio;
+    // MidiDriver
 
-    Switch revView;
-    Toast toast;
+    private MidiDriver midi;
+
+    // Views
+
+    private TextView keyView;
+    private Switch revView;
+    private Toast toast;
 
     // On create
 
@@ -333,15 +349,46 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
 	super.onCreate(savedInstanceState);
-	setContentView(R.layout.activity_main);
+
+	// Get preferences
 
 	getPreferences();
 
-	// Create audio
+	// Set layout
 
-	audio = new Audio();
+	switch (layout)
+	{
+	case LAYOUT_STANDARD:
+	    setContentView(R.layout.activity_main);
+	    break;
+
+	case LAYOUT_LOWER_25:
+	    setContentView(R.layout.activity_main_lower);
+	    break;
+
+	case LAYOUT_UPPER_25:
+	    setContentView(R.layout.activity_main_upper);
+	    break;
+	}
+
+	// Add custom view to action bar
+
+	ActionBar actionBar = getActionBar();
+	actionBar.setCustomView(R.layout.text_view);
+	actionBar.setDisplayShowCustomEnabled(true);
+
+	keyView = (TextView)actionBar.getCustomView();
+
+	// Create midi
+
+	midi = new MidiDriver();
 
 	setListener();
+
+	// Set volume, let the user adjust the volume with the
+	// android volume buttons
+
+	volume = 127;
     }
 
     // On create option menu
@@ -366,8 +413,10 @@ public class MainActivity extends Activity
 
 	getPreferences();
 
-	if (audio != null)
-	    audio.start();
+	// Start midi
+
+	if (midi != null)
+	    midi.start();
     }
 
     // On pause
@@ -381,8 +430,10 @@ public class MainActivity extends Activity
 
 	savePreferences();
 
-	if (audio != null)
-	    audio.stop();
+	// Stop midi
+
+	if (midi != null)
+	    midi.stop();
     }
 
     // On options item
@@ -418,6 +469,8 @@ public class MainActivity extends Activity
 
 	switch (action)
 	{
+	    // Down
+
 	case MotionEvent.ACTION_DOWN:
 	    switch (id)
 	    {
@@ -427,6 +480,8 @@ public class MainActivity extends Activity
 	    default:
 		return onButtonDown(v, event);
 	    }
+
+	    // Up
 
 	case MotionEvent.ACTION_UP:
 	    switch (id)
@@ -443,6 +498,8 @@ public class MainActivity extends Activity
 	}
     }
 
+    // On checked changed
+
     @Override
     public void onCheckedChanged(CompoundButton button,
 				 boolean isChecked)
@@ -451,14 +508,22 @@ public class MainActivity extends Activity
 
 	switch (id)
 	{
+	    // Reverse switch
+
 	case R.id.reverse:
 	    reverse = isChecked;
+
+	    // Show toast
 
 	    if (reverse)
 		showToast(R.string.buttons_reversed);
 
 	    else
 		showToast(R.string.buttons_normal);
+
+	    // Set button hilites
+
+	    setButtonHilites();
 	    break;
 
 	default:
@@ -466,9 +531,18 @@ public class MainActivity extends Activity
 	}
     }
 
+    @Override
+    public void onMidiStart()
+    {
+	// Set instrument
+
+	for (int i = 0; i <= buttons.length; i++)
+	    midi.writeChange(change + i, instrument);
+    }
+
     // Save preferences
 
-    void savePreferences()
+    private void savePreferences()
     {
 	SharedPreferences preferences =
 	    PreferenceManager.getDefaultSharedPreferences(this);
@@ -482,7 +556,7 @@ public class MainActivity extends Activity
 
     // Get preferences
 
-    void getPreferences()
+    private void getPreferences()
     {
 	// Load preferences
 
@@ -495,22 +569,124 @@ public class MainActivity extends Activity
 
 	instrument =
 	    Integer.parseInt(preferences.getString(PREF_INSTRUMENT, "21"));
+	layout =
+	    Integer.parseInt(preferences.getString(PREF_LAYOUT, "0"));
 	fascia =
 	    Integer.parseInt(preferences.getString(PREF_FASCIA, "0"));
 	key =
 	    Integer.parseInt(preferences.getString(PREF_KEY, "2"));
 
+	// Set type from key
+
 	type = types[key];
+
+	// Set key text
+
+	Resources resources = getResources();
+	String keys[] = resources.getStringArray(R.array.pref_key_entries);
+
+	String layouts[] =
+	    resources.getStringArray(R.array.pref_layout_entries);
+
+	if (keyView != null)
+	    keyView.setText(keys[key] + "    " + layouts[layout]);
+
+	// Set reverse
 
 	reverse = preferences.getBoolean(PREF_REVERSE, false);
 
+	// Set reverse switch
+
 	if (revView != null)
 	    revView.setChecked(reverse);
+
+	// Set button hilites
+
+	setButtonHilites();
+
+	// Set fascia
 
 	View v = findViewById(R.id.fascia);
 
 	if (v != null)
 	    v.setBackgroundResource(fascias[fascia]);
+    }
+
+    // Set button hilites
+
+    private void setButtonHilites()
+    {
+	View v;
+	boolean large = false;
+
+	// If the first or last button in the middle row isn't there
+	// we must be using large buttons
+
+	if(((v = findViewById(buttons[1][0])) == null) ||
+	   ((v = findViewById(buttons[1][buttons[1].length - 1])) == null))
+	    large = true;
+
+	// Diatonic, set all buttons normal
+
+	if (type == DIATONIC)
+	{
+	    for (int i = 0; i < buttons.length; i++)
+	    {
+		for (int j = 0; j < buttons[i].length; j++)
+		{
+		    ImageButton button =
+			(ImageButton)findViewById(buttons[i][j]);
+		    if (button != null)
+		    {
+			if (large)
+			    button.setImageResource(R.drawable.ic_button_large);
+
+			else
+			    button.setImageResource(R.drawable.ic_button);
+		    }
+		}
+	    }
+	}
+
+	// Chromatic, set dark buttons
+
+	else
+	{
+	    for (int i = 0; i < hilites[key].length; i++)
+	    {
+		for (int j = 0; j < hilites[key][i].length; j++)
+		{
+		    int k = reverse? buttons[i].length - j - 1: j;
+
+		    ImageButton button =
+			(ImageButton)findViewById(buttons[i][k]);
+
+		    if (button != null)
+		    {
+			if (large)
+			{
+			    if (!hilites[key][i][j])
+				button.
+				    setImageResource(R.drawable.ic_button_large);
+
+			    else
+				button.
+				    setImageResource(R.drawable.ic_button_black_large);
+			}
+
+			else
+			{
+			    if (!hilites[key][i][j])
+				button.setImageResource(R.drawable.ic_button);
+
+			    else
+				button.
+				    setImageResource(R.drawable.ic_button_black);
+			}
+		    }
+		}
+	    }
+	}
     }
 
     // On bellows down
@@ -551,15 +727,37 @@ public class MainActivity extends Activity
 
 			// Stop note
 
-			midiWrite(noteOff + i, note, volume);
+			midi.writeNote(noteOff + i, note, volume);
 
 			note = notes[type][k][bellows? 1: 0] +
 			    keyvals[key][i];
 
 			// Play note
 
-			midiWrite(noteOn + i, note, volume);
+			midi.writeNote(noteOn + i, note, volume);
 		    }
+		}
+	    }
+
+	    for (int i = 0; i < basses.length; i++)
+	    {
+		if (bassStates[i])
+		{
+		    // Play chord
+
+		    int k = (reverse)? basses.length - i - 1: i;
+
+		    int note =	chords[key][k][!bellows? 1: 0][0];
+		    midi.writeNote(noteOff + 3, note, volume);
+
+		    note =  chords[key][k][!bellows? 1: 0][1];
+		    midi.writeNote(noteOff + 3, note, volume);
+
+		    note =  chords[key][k][bellows? 1: 0][0];
+		    midi.writeNote(noteOn + 3, note, volume);
+
+		    note =  chords[key][k][bellows? 1: 0][1];
+		    midi.writeNote(noteOn + 3, note, volume);
 		}
 	    }
 	}
@@ -603,15 +801,37 @@ public class MainActivity extends Activity
 
 			// Stop note
 
-			midiWrite(noteOff + i, note, volume);
+			midi.writeNote(noteOff + i, note, volume);
 
 			note = notes[type][k][bellows? 1: 0] +
 			    keyvals[key][i];
 
 			// Play note
 
-			midiWrite(noteOn + i, note, volume);
+			midi.writeNote(noteOn + i, note, volume);
 		    }
+		}
+	    }
+
+	    for (int i = 0; i < basses.length; i++)
+	    {
+		if (bassStates[i])
+		{
+		    // Play chord
+
+		    int k = (reverse)? basses.length - i - 1: i;
+
+		    int note =	chords[key][k][!bellows? 1: 0][0];
+		    midi.writeNote(noteOff + 3, note, volume);
+
+		    note =  chords[key][k][!bellows? 1: 0][1];
+		    midi.writeNote(noteOff + 3, note, volume);
+
+		    note =  chords[key][k][bellows? 1: 0][0];
+		    midi.writeNote(noteOn + 3, note, volume);
+
+		    note =  chords[key][k][bellows? 1: 0][1];
+		    midi.writeNote(noteOn + 3, note, volume);
 		}
 	    }
 	}
@@ -640,7 +860,7 @@ public class MainActivity extends Activity
 		    switch (i)
 		    {
 		    case 0:
-			k = (reverse)? buttons[i].length - j - 2: j;
+			k = (reverse)? buttons[i].length - j - 1: j;
 			break;
 
 		    case 1:
@@ -648,12 +868,12 @@ public class MainActivity extends Activity
 			break;
 
 		    case 2:
-			k = (reverse)? buttons[i].length - j - 1: j + 1;
+			k = (reverse)? buttons[i].length - j: j + 1;
 			break;
 		    }
 
-		    int note =  notes[type][k][bellows? 1: 0] + keyvals[key][i];
-		    midiWrite(noteOn + i, note, volume);
+		    int note =	notes[type][k][bellows? 1: 0] + keyvals[key][i];
+		    midi.writeNote(noteOn + i, note, volume);
 		    return false;
 		}
 	    }
@@ -672,10 +892,10 @@ public class MainActivity extends Activity
 		int k = (reverse)? basses.length - i - 1: i;
 
 		int note = chords[key][k][bellows? 1: 0][0];
-		midiWrite(noteOn + 3, note, volume);
+		midi.writeNote(noteOn + 3, note, volume);
 
 		note = chords[key][k][bellows? 1: 0][1];
-		midiWrite(noteOn + 3, note, volume);
+		midi.writeNote(noteOn + 3, note, volume);
 
 		return false;
 	    }
@@ -703,7 +923,7 @@ public class MainActivity extends Activity
 		    switch (i)
 		    {
 		    case 0:
-			k = (reverse)? buttons[i].length - j - 2: j;
+			k = (reverse)? buttons[i].length - j - 1: j;
 			break;
 
 		    case 1:
@@ -711,12 +931,12 @@ public class MainActivity extends Activity
 			break;
 
 		    case 2:
-			k = (reverse)? buttons[i].length - j - 1: j + 1;
+			k = (reverse)? buttons[i].length - j: j + 1;
 			break;
 		    }
 
-		    int note =  notes[type][k][bellows? 1: 0] + keyvals[key][i];
-		    midiWrite(noteOff + i, note, 0);
+		    int note =	notes[type][k][bellows? 1: 0] + keyvals[key][i];
+		    midi.writeNote(noteOff + i, note, 0);
 
 		    return false;
 		}
@@ -736,10 +956,10 @@ public class MainActivity extends Activity
 		int k = (reverse)? basses.length - i - 1: i;
 
 		int note = chords[key][k][bellows? 1: 0][0];
-		midiWrite(noteOff + 3, note, volume);
+		midi.writeNote(noteOff + 3, note, volume);
 
 		note = chords[key][k][bellows? 1: 0][1];
-		midiWrite(noteOff + 3, note, volume);
+		midi.writeNote(noteOff + 3, note, volume);
 
 		return false;
 	    }
@@ -750,7 +970,7 @@ public class MainActivity extends Activity
 
     // Show toast.
 
-    void showToast(int key)
+    private void showToast(int key)
     {
 	Resources resources = getResources();
 	String text = resources.getString(key);
@@ -758,7 +978,7 @@ public class MainActivity extends Activity
 	showToast(text);
     }
 
-    void showToast(String text)
+    private void showToast(String text)
     {
 	// Cancel the last one
 
@@ -772,9 +992,13 @@ public class MainActivity extends Activity
 	toast.show();
     }
 
+    // Set listener
+
     private void setListener()
     {
 	View v;
+
+	// Set listener for all buttons
 
 	for (int i = 0; i < buttons.length; i++)
 	{
@@ -786,6 +1010,8 @@ public class MainActivity extends Activity
 	    }
 	}
 
+	// Bass buttons
+
 	for (int i = 0; i < basses.length; i++)
 	{
 	    v = findViewById(basses[i]);
@@ -793,114 +1019,21 @@ public class MainActivity extends Activity
 		v.setOnTouchListener(this);
 	}
 
+	// Bellows
+
 	v = findViewById(R.id.bellows);
 	if (v != null)
 	    v.setOnTouchListener(this);
 
+	// Reverse switch
+
 	revView = (Switch)findViewById(R.id.reverse);
 	if (revView != null)
 	    revView.setOnCheckedChangeListener(this);
-   }
 
-    // Audio
+	// Midi start
 
-    protected class Audio implements Runnable
-    {
-	static final int SAMPLE_RATE = 22050;
-	static final int BUFFER_SIZE = 4096;
-
-	protected Thread thread;
-	protected AudioTrack audioTrack;
-
-	protected byte byteArray[];
-
-	// Constructor
-
-	protected Audio()
-	{
-	    volume = 127;
-	}
-
-	// Start audio
-
-	protected void start()
-	{
-	    // Start the thread
-
-	    thread = new Thread(this, "Audio");
-	    thread.start();
-	}
-
-	// Run
-
-	@Override
-	public void run()
-	{
-	    processAudio();
-	}
-
-	// Stop
-
-	protected void stop()
-	{
-	    Thread t = thread;
-	    thread = null;
-
-	    // Wait for the thread to exit
-
-	    while (t != null && t.isAlive())
-		Thread.yield();
-	}
-
-	// Process Audio
-
-	protected void processAudio()
-	{
-	    int status = 0;
-	    int size = 0;
-
-	    if ((size = midiInit()) == 0)
-		return;
-
-	    byteArray = new byte[size];
-
-	    audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, SAMPLE_RATE,
-					AudioFormat.CHANNEL_OUT_STEREO,
-					AudioFormat.ENCODING_PCM_8BIT,
-					BUFFER_SIZE, AudioTrack.MODE_STATIC);
-	    if (audioTrack == null)
-		return;
-
-	    while (thread != null)
-	    {
-		if (midiRender(byteArray) == 0)
-		    break;
-
-		status = audioTrack.write(byteArray, 0, byteArray.length);
-
-		if (status < 0)
-		    break;
-	    }
-
-	    if (status > 0)
-	    {
-		if (midiRender(byteArray) > 0)
-		    audioTrack.write(byteArray, 0, byteArray.length);
-	    }
-
-	    midiShutdown();
-	    audioTrack.release();
-	}
+	if (midi != null)
+	    midi.setOnMidiStartListener(this);
     }
-
-    protected native int     midiInit();
-    protected native int     midiRender(byte a[]);
-    protected native boolean midiWrite(int s, int n, int v);
-    protected native boolean midiShutdown();
-
-    static
-    {
-        System.loadLibrary("midi");
-    }
-
 }
