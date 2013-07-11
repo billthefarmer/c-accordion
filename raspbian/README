@@ -1,0 +1,79 @@
+                              Accordion
+                              =========
+
+Three row accordion emulator with bass. Uses the standard keyboard
+keys as accordion buttons, the function keys as bass buttons, and the
+space bar as the bellows. The Esc, Shift, Ctrl and Alt keys may also
+be used as the bellows. Unfortunately, depending on your luck, the
+keyboard on your machine may not detect more than two or three buttons
+pressed at once. I found an old keyboard worked much better. You can
+see what is going on in the bottom half of the accordion window, which
+shows what keys the program thinks are pressed.
+
+Dependancies
+============
+
+Accordion uses ALSA, Sonivox, and Gtk+, so you need libasound2,
+libmidi, libsonivox, and libgtk2.0-0. If you are running a Debian-like
+system, like Raspbian, you can get these with the shell command 'sudo
+apt-get install libasound2 libgtk2.0-0'. Libmidi and libsonivox are
+included.
+
+Controls
+========
+
+There are two drop down controls, two toggle buttons, a volume
+control, and a button in the top half of the window. The instruments
+drop down lets you choose what midi instrument you would like to
+attempt to play. The reverse button check box lets you play
+widdershins. The key drop down lets you choose a key to play in. There
+is a choice of F/Bb/Eb, G/C/F, A/D/G, C#/D/G, B/C/C#, C System and B
+System. The key defaults to A/D/G. More kays can be added by popular
+request, or you can hack the program yourself. The Notes button shows
+notes on the key buttons. I have removed the '#' and 'b' symbols
+because they make the buttons resize themselves. The volume control
+lets you change the volume. The volume defaults to maximum. The quit
+button lets you give up, or you can click on the window close icon.
+
+Playing
+=======
+
+Hold the keyboard in a vertical position, with the escape key at the
+top. Adjust the reverse check box according to which hand you want to
+use. Press the keys as if they were accordion buttons, and press the
+space bar to emulate waggling the bellows. If you don't know how to
+play button accordion see http://info.melodeon.net
+
+Files
+=====
+
+AUTHORS		- Authors
+aclocal.m4	- Part of autoconf
+ChangeLog	- Change log
+configure	- Configuration script
+configure.ac	- Input to autoconf
+COPYING		- Licence file
+INSTALL		- Installation instructions
+install-sh	- Install script, used by make install
+Makefile	- Nice simple Makefile with no auto...
+Makefile.am	- Input to automake
+Makefile.de	- Not a German Makefile, but a backup of the nice simple one
+Makefile.in	- Build file
+Accordion.c	- Source file
+Accordion	- Application
+NEWS		- News
+README		- This file
+
+Building
+========
+
+You have a choice: If you have a Debian/Rasbian system, you should be
+able to just type 'make'. The dependancies are: libasound2-dev and
+libgtk2.0-dev, so if you haven't got them installed, you can type
+'sudo apt-get install libasound2-dev libgtk2.0-dev'. This will install
+loads of other stuff as well. If you want the full monty with error
+messages buried in pages of gnubabble, or your system is completely
+different, type './configure', 'make' and 'make install' if
+successful. See INSTALL for the official instructions. This will
+overwrite the nice simple Makefile, but there is a cunning backup in
+Makefile.de. Obviously autoconf doesn't understand German.
