@@ -5,7 +5,8 @@
 ################################################################################
 
 GCC	= gcc
-CFLAGS  = -O2 -std=gnu99 -L. -L/usr/local/lib -Wl,-R. -Wl,-R/usr/local/lib
+CFLAGS  = -O2 -fPIC -std=gnu99 -L/usr/local/lib -Wl,-R/usr/local/lib \
+	-Wl,-z,relro
 LIBS    = -lmidi -lsonivox
 all:	Accordion
 
