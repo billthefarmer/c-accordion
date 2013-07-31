@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([Accordion], [1.06])
+AC_INIT([Accordion], [1.03])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([Accordion.c])
 

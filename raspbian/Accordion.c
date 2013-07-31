@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Melodeon - A simple Melodeon emulator written in C.
+//  Accordion - A simple Accordion emulator written in C.
 //
-//  Copyright (C) 2009  Bill Farmer
+//  Copyright (C) 2013  Bill Farmer
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //  with this program; if not, write to the Free Software Foundation, Inc.,
 //  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
-//  Bill Farmer  william j farmer [at] tiscali [dot] co [dot] uk.
+//  Bill Farmer  william j farmer [at] yahoo [dot] co [dot] uk.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
