@@ -692,7 +692,7 @@ int main(int argc, char *argv[])
     // Focus in callback
 
     g_signal_connect(G_OBJECT(window), "focus-in-event",
-		     G_CALLBACK(focus_out), disp);
+		     G_CALLBACK(focus_in), disp);
 
     // Key pressed callback
 
