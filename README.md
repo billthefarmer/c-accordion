@@ -7,7 +7,7 @@ version have been released. Now including bass. The 12 bass
 buttons play uni-sonic bass notes for B/C/C#, C System and B
 System.
 
-![http://accordion.googlecode.com/files/Accordion-1.03.png](https://github.com/billthefarmer/billthefarmer.github.io/raw/master/images/Accordion-1.03.png)
+![http://accordion.googlecode.com/files/Accordion-1.03.png](https://github.com/billthefarmer/billthefarmer.github.io/raw/master/images/accordion/Accordion-1.03.png)
 
   * Keys: F/Bb/Eb, G/C/F, A/D/G, C#/D/G, B/C/C#, C System, B System
   * Intruments: Standard midi set, defaults to accordion
