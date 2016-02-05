@@ -27,7 +27,7 @@
 
 // Macros
 
-#define LENGTH(a) (sizeof(a) / sizeof(a[0]))
+#define Length(a) (sizeof(a) / sizeof(a[0]))
 
 // Tool ids
 
@@ -132,7 +132,7 @@ char *keys[] =
     {" F/Bb/Eb", " G/C/F", " A/D/G", " C#/D/G", " B/C/C#",
      " C System", " B System"};
 
-int keyvals[LENGTH(keys)][ROWS] =
+int keyvals[Length(keys)][ROWS] =
     {{ 3, -2, -7},  // F/Bb/Eb
      { 5,  0, -5},  // G/C/F
      { 7,  2, -3},  // A/D/G
@@ -148,7 +148,7 @@ UINT key;
 
 // Types
 
-BYTE types[LENGTH(keys)] =
+BYTE types[Length(keys)] =
     {DIATONIC, DIATONIC, DIATONIC, DIATONIC,
      DIATONIC, CHROMATIC, CHROMATIC};
 
@@ -163,7 +163,7 @@ BYTE keyboard[ROWS][BUTTONS] =
 
 // Keyboard notes
 
-char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
+char *notetops[Length(keys)][ROWS][BUTTONS] =
     {
 	// F/Bb/Eb
 
@@ -210,7 +210,7 @@ char *notetops[LENGTH(keys)][ROWS][BUTTONS] =
 
 // Hilites
 
-BOOL hilites[LENGTH(keys)][ROWS][BUTTONS] =
+BOOL hilites[Length(keys)][ROWS][BUTTONS] =
     {
 	// F/Bb/Eb
 
@@ -289,7 +289,7 @@ BYTE notes[TYPES][BUTTONS][DIRECTIONS] =
 
 // Chords
 
-BYTE chords[LENGTH(keys)][BASSBUTTONS][DIRECTIONS][2] =
+BYTE chords[Length(keys)][BASSBUTTONS][DIRECTIONS][2] =
     {
 	// F/Bb/Eb
 
@@ -568,7 +568,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Add the instrument names
 
-	for (int i = 0; i < LENGTH(instruments); i++)
+	for (int i = 0; i < Length(instruments); i++)
 	    SendMessage(inst, CB_ADDSTRING, 0, (LPARAM)instruments[i]);
 
 	// Select the Accordion
@@ -607,7 +607,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Add the keys
 
-	for (int i = 0; i < LENGTH(keys); i++)
+	for (int i = 0; i < Length(keys); i++)
 	    SendMessage(hkey, CB_ADDSTRING, 0, (LPARAM)keys[i]);
 
 	// Select A/D/G
@@ -703,7 +703,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Create a row of bass buttons
 
-	for (int i = 0; i < LENGTH(bassdisplay); i++)
+	for (int i = 0; i < Length(bassdisplay); i++)
 	{
 	  int x = 21 + 44 * i;
 	  int y = bottom - 186;
@@ -719,10 +719,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Create three rows of keyboard buttons
 
-	for (int i = 0; i < LENGTH(display); i++)
+	for (int i = 0; i < Length(display); i++)
 	{
-	    for (int j = 0; j < ((i == 1)? LENGTH(display[i]):
-			      LENGTH(display[i]) - 1); j++)
+	    for (int j = 0; j < ((i == 1)? Length(display[i]):
+			      Length(display[i]) - 1); j++)
 	    {
 		int x = (i == 1)? 43 + 44 * j: 65 + 44 * j;
 		int y = bottom + 44 * i - 142;
@@ -832,7 +832,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 
 	// Reset all the buttons
 
-	for (int i = 0; i < LENGTH(bass); i++)
+	for (int i = 0; i < Length(bass); i++)
 	{
 	    if (bass[i])
 		bass[i] = FALSE;
@@ -841,9 +841,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 		SendMessage(bassdisplay[i], BM_SETSTATE, FALSE, 0);
 	}
 
-	for (int i = 0; i < LENGTH(buttons); i++)
+	for (int i = 0; i < Length(buttons); i++)
 	{
-	    for (int j = 0; j < LENGTH(buttons[i]); j++)
+	    for (int j = 0; j < Length(buttons[i]); j++)
 	    {
 		if (buttons[i][j])
 		    buttons[i][j] = FALSE;
@@ -970,9 +970,9 @@ UINT ChangeInstrument(HWND hinst)
 {
     instrument = SendMessage(hinst, CB_GETCURSEL, 0, 0);
 
-    for (int i = 0; i < LENGTH(buttons); i++)
+    for (int i = 0; i < Length(buttons); i++)
 	ShortMessage(CHANGE + i, instrument, 0);
-	ShortMessage(CHANGE + LENGTH(buttons), instrument, 0);
+	ShortMessage(CHANGE + Length(buttons), instrument, 0);
 }
 
 // Reverse buttons
@@ -1020,24 +1020,24 @@ UINT ChangeDisplay()
 {
     // Change display
 
-    for (int i = 0; i < LENGTH(notetops[0]); i++)
+    for (int i = 0; i < Length(notetops[0]); i++)
     {
-	for (int j = 0; j < LENGTH(notetops[0][0]); j++)
+	for (int j = 0; j < Length(notetops[0][0]); j++)
 	{
 	    int k;
 
 	    switch (i)
 	    {
 	    case 0:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		k = (reverse)? Length(notetops[0][i]) - j - 2: j;
 		break;
 
 	    case 1:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 1: j;
+		k = (reverse)? Length(notetops[0][i]) - j - 1: j;
 		break;
 
 	    case 2:
-		k = (reverse)? LENGTH(notetops[0][i]) - j - 2: j;
+		k = (reverse)? Length(notetops[0][i]) - j - 2: j;
 		break;
 	    }
 
@@ -1135,9 +1135,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (int i = 0; i < LENGTH(buttons); i++)
+	    for (int i = 0; i < Length(buttons); i++)
 	    {
-		for (int j = 0; j < LENGTH(buttons[i]); j++)
+		for (int j = 0; j < Length(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -1148,15 +1148,15 @@ UINT KeyDown(WPARAM w, LPARAM l)
 			switch (i)
 			{
 			case 0:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    k = (reverse)? Length(buttons[i]) - j - 2: j;
 			    break;
 
 			case 1:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j;
 			    break;
 
 			case 2:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
 
@@ -1166,13 +1166,13 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		}
 	    }
 
-	    for (int i = 0; i < LENGTH(bass); i++)
+	    for (int i = 0; i < Length(bass); i++)
 	    {
 		if (bass[i])
 		{
 		    // Play chord
 
-		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		    int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		    int note =  chords[key][k][bellows][0];
 		    ShortMessage(NOTEON + ROWS, note, volume);
@@ -1190,9 +1190,9 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	    // Look up the key code in the keyboard table
 
-	for (int i = 0; i < LENGTH(keyboard); i++)
+	for (int i = 0; i < Length(keyboard); i++)
 	{
-	    for (int j = 0; j < LENGTH(keyboard[i]); j++)
+	    for (int j = 0; j < Length(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && !buttons[i][j])
 		{
@@ -1206,15 +1206,15 @@ UINT KeyDown(WPARAM w, LPARAM l)
 		    switch (i)
 		    {
 		    case 0:
-			k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			k = (reverse)? Length(buttons[i]) - j - 2: j;
 			break;
 
 		    case 1:
-			k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			k = (reverse)? Length(buttons[i]) - j - 1: j;
 			break;
 
 		    case 2:
-			k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			break;
 		    }
 
@@ -1227,7 +1227,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 	// Check the bass keys
 
-	for (int i = 0; i < LENGTH(basskeys); i++)
+	for (int i = 0; i < Length(basskeys); i++)
 	{
 	    if (((w == basskeys[i][0]) ||
 		 (w == basskeys[i][1])) && !bass[i])
@@ -1237,7 +1237,7 @@ UINT KeyDown(WPARAM w, LPARAM l)
 
 		// Play chord
 
-		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		int note = chords[key][k][bellows][0];
 		ShortMessage(NOTEON + ROWS, note, volume);
@@ -1275,9 +1275,9 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 	    // Check buttons
 
-	    for (int i = 0; i < LENGTH(buttons); i++)
+	    for (int i = 0; i < Length(buttons); i++)
 	    {
-		for (int j = 0; j < LENGTH(buttons[i]); j++)
+		for (int j = 0; j < Length(buttons[i]); j++)
 		{
 		    if (buttons[i][j])
 		    {
@@ -1288,15 +1288,15 @@ UINT KeyUp(WPARAM w, LPARAM l)
 			switch (i)
 			{
 			case 0:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			    k = (reverse)? Length(buttons[i]) - j - 2: j;
 			    break;
 
 			case 1:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j;
 			    break;
 
 			case 2:
-			    k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			    k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			    break;
 			}
 
@@ -1306,13 +1306,13 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		}
 	    }
 
-	    for (int i = 0; i < LENGTH(bass); i++)
+	    for (int i = 0; i < Length(bass); i++)
 	    {
 		if (bass[i])
 		{
 		    // Play chord
 
-		    int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		    int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		    int note =  chords[key][k][bellows][0];
 		    ShortMessage(NOTEON + ROWS, note, volume);
@@ -1327,9 +1327,9 @@ UINT KeyUp(WPARAM w, LPARAM l)
 	// Check keyboard
 
     default:
-	for (int i = 0; i < LENGTH(keyboard); i++)
+	for (int i = 0; i < Length(keyboard); i++)
 	{
-	    for (int j = 0; j < LENGTH(keyboard[i]); j++)
+	    for (int j = 0; j < Length(keyboard[i]); j++)
 	    {
 		if (w == keyboard[i][j] && buttons[i][j])
 		{
@@ -1343,15 +1343,15 @@ UINT KeyUp(WPARAM w, LPARAM l)
 		    switch (i)
 		    {
 		    case 0:
-			k = (reverse)? LENGTH(buttons[i]) - j - 2: j;
+			k = (reverse)? Length(buttons[i]) - j - 2: j;
 			break;
 
 		    case 1:
-			k = (reverse)? LENGTH(buttons[i]) - j - 1: j;
+			k = (reverse)? Length(buttons[i]) - j - 1: j;
 			break;
 
 		    case 2:
-			k = (reverse)? LENGTH(buttons[i]) - j - 1: j + 1;
+			k = (reverse)? Length(buttons[i]) - j - 1: j + 1;
 			break;
 		    }
 
@@ -1364,7 +1364,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 	// Check the bass keys
 
-	for (int i = 0; i < LENGTH(basskeys); i++)
+	for (int i = 0; i < Length(basskeys); i++)
 	{
 	    if (((w == basskeys[i][0]) ||
 		 (w == basskeys[i][1])) && bass[i])
@@ -1374,7 +1374,7 @@ UINT KeyUp(WPARAM w, LPARAM l)
 
 		// Stop chord
 
-		int k = (reverse)? LENGTH(basskeys) - i - 1: i;
+		int k = (reverse)? Length(basskeys) - i - 1: i;
 
 		int note = chords[key][k][bellows][0];
 		ShortMessage(NOTEOFF + ROWS, note, volume);

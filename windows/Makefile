@@ -17,7 +17,7 @@ clean:
 	rm *.exe
 
 %.exe:	%.c
-	$(GCC) -o $* $< $*.o -std=gnu99 -mwindows -lcomctl32 -lwinmm
+	$(GCC) -o $* $< $*.o -Os -std=gnu99 -mwindows -lcomctl32 -lwinmm
 
 %.o:	%.rc
 	$(WINDRES) -o $@ $<
