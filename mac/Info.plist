@@ -5,9 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>Accordion</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Copyright 2012 Bill Farmer</string>
+	<string>Copyright 2009 Bill Farmer</string>
 	<key>CFBundleIconFile</key>
 	<string>Accordion</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>Accordion</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -23,6 +23,6 @@
 	<key>CFBundleSignature</key>
 	<string>ACDN</string>
 	<key>CFBundleVersion</key>
-	<string>Version 1.01</string>
+	<string>1.01</string>
 </dict>
 </plist>

@@ -556,10 +556,10 @@ int main(int argc, char *argv[])
 
     // Set menu title
 
-    SetMenuTitleWithCFString(menu,
-	CFStringCreateWithPascalString(kCFAllocatorDefault,
-                                       "\p\024",
-                                       kCFStringEncodingMacRoman));
+    SetMenuTitleWithCFString(menu, CFSTR("\024"));
+    //	CFStringCreateWithPascalString(kCFAllocatorDefault,
+    //                                       "\p\024",
+    //                                       kCFStringEncodingMacRoman));
     // Create an about item
 
     InsertMenuItemTextWithCFString(menu, CFSTR("About Accordion"),
@@ -745,7 +745,16 @@ int main(int argc, char *argv[])
     // Create slider
 
     CreateSliderControl(window, &bounds, MAXVOL, 0, MAXVOL,
-                        kControlSliderDoesNotPoint, 0, false, NULL, &slider);
+                        kControlSliderPointsDownOrRight,
+			0, false, NULL, &slider);
+    // Control size
+
+    ControlSize small = kControlSizeSmall;
+
+    // Set control size
+
+    SetControlData(slider, kControlEntireControl, kControlSizeTag,
+                   sizeof(ControlSize), &small);
 
     // Set command ID
 
@@ -1208,7 +1217,7 @@ OSStatus DisplayAlert(CFStringRef error, CFStringRef explanation,
 					 CFSTR("%s: '%s' (0x%x)"),
 					 CFStringGetCStringPtr(explanation,
 					     kCFStringEncodingMacRoman),
-					 s, status);
+					 s, (int)status);
 	}
 
 	else
@@ -1218,7 +1227,7 @@ OSStatus DisplayAlert(CFStringRef error, CFStringRef explanation,
 					 CFSTR("%s: %d (0x%x)"),
 					 CFStringGetCStringPtr(explanation,
 					     kCFStringEncodingMacRoman),
-					 status, status);
+					 (int)status, (int)status);
 	}
 
 	CreateStandardAlert(kAlertStopAlert, error, exp, NULL, &dialog);
